@@ -7,7 +7,7 @@ const LAB_SUB = "Department of Mechanical Engineering &nbsp;&middot;&nbsp; Unive
 // ============================================================
 
 const NAV = [
-  ["index.html",       "Home"],
+  ["index.html",       "Home2"],
   ["research.html",    "Research"],
   ["people.html",      "People"],
   ["prospective.html", "Prospective Students"],
