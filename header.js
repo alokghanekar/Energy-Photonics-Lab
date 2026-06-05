@@ -1,6 +1,6 @@
 // ============================================================
 // To change the lab name, edit ONLY the line below:
-const LAB_NAME = "Energy Photonics Lab"; 
+const LAB_NAME = "Energy Photonics Lab22"; 
 
 // To change the sub-title line, edit this:
 const LAB_SUB = "Department of Mechanical Engineering &nbsp;&middot;&nbsp; University of Maryland, Baltimore County";
