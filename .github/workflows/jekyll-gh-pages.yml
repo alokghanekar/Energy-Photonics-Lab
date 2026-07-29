@@ -35,6 +35,8 @@ jobs:
         with:
           source: ./
           destination: ./_site
+      - name: Validate generated site
+        run: python3 scripts/check_site.py _site --baseurl /Energy-Photonics-Lab
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
