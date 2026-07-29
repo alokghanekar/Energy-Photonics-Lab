@@ -1,1 +1,21 @@
-theme: minima
+title: Energy Photonics Lab
+description: >-
+  The Energy Photonics Lab at the University of Maryland, Baltimore County studies
+  infrared nanophotonics, active metasurfaces, thermal radiation, energy harvesting,
+  radiative cooling, and thermal management.
+url: "https://alokghanekar.github.io"
+baseurl: ""
+email: alokghanekar@umbc.edu
+author: Alok Ghanekar
+institution: University of Maryland, Baltimore County
+timezone: America/New_York
+markdown: kramdown
+permalink: pretty
+plugins:
+  - jekyll-sitemap
+exclude:
+  - README.md
+  - docs
+  - scripts
+  - Gemfile
+  - Gemfile.lock

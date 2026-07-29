@@ -1,0 +1,17 @@
+<header class="site-header">
+  <div class="header-inner">
+    <a class="lab-name" href="{{ '/' | relative_url }}">Energy Photonics Lab</a>
+    <p class="lab-sub">Department of Mechanical Engineering <span aria-hidden="true">·</span> University of Maryland, Baltimore County</p>
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <ul>
+        {% assign nav_items = "Home|/,Research|/research.html,People|/people.html,Prospective Students|/prospective.html,News|/news.html,Publications|/publications.html" | split: "," %}
+        {% for item in nav_items %}
+          {% assign parts = item | split: "|" %}
+          {% assign label = parts[0] %}
+          {% assign target = parts[1] %}
+          <li><a href="{{ target | relative_url }}"{% if page.url == target %} class="active" aria-current="page"{% endif %}>{{ label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</header>
