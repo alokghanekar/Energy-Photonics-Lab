@@ -1,8 +1,8 @@
 # Energy Photonics Lab website
 
-This repository is prepared for the GitHub user-site address:
+This repository is published as a GitHub project site:
 
-`https://alokghanekar.github.io/`
+`https://alokghanekar.github.io/Energy-Photonics-Lab/`
 
 ## Editing the site
 
@@ -15,7 +15,7 @@ This repository is prepared for the GitHub user-site address:
 
 ## Publishing
 
-Create a public GitHub repository named exactly `alokghanekar.github.io`, upload these files to its `main` branch, and enable GitHub Pages using **GitHub Actions** under **Settings → Pages**.
+Keep the repository public and enable GitHub Pages using **GitHub Actions** under **Settings → Pages**.
 
 Every push to `main` builds the Jekyll site, validates local links and image files, and deploys it.
 

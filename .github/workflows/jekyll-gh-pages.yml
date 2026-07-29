@@ -5,6 +5,9 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+  # Builds and validates proposed changes without deploying them
+  pull_request:
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,11 +38,14 @@ jobs:
         with:
           source: ./
           destination: ./_site
+      - name: Validate generated site
+        run: python3 scripts/check_site.py _site --baseurl /Energy-Photonics-Lab
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
   # Deployment job
   deploy:
+    if: github.event_name == 'push'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

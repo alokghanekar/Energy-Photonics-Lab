@@ -2,7 +2,7 @@
 """Validate generated site files without making network requests."""
 from __future__ import annotations
 
-import sys
+import argparse
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -21,13 +21,15 @@ class ReferenceParser(HTMLParser):
                 self.references.append((name, value.strip()))
 
 
-def candidate_paths(site: Path, page: Path, raw: str) -> list[Path]:
+def candidate_paths(site: Path, page: Path, raw: str, baseurl: str) -> list[Path]:
     parsed = urlsplit(raw)
     if parsed.scheme.lower() in REMOTE_SCHEMES or raw.startswith("#") or raw.startswith("//"):
         return []
     path_text = unquote(parsed.path)
     if not path_text:
         return []
+    if baseurl and (path_text == baseurl or path_text.startswith(f"{baseurl}/")):
+        path_text = path_text[len(baseurl):] or "/"
     if path_text.startswith("/"):
         target = site / path_text.lstrip("/")
     else:
@@ -56,7 +58,16 @@ def verify_image(path: Path) -> str | None:
 
 
 def main() -> int:
-    site = Path(sys.argv[1] if len(sys.argv) > 1 else "_site").resolve()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("site", nargs="?", default="_site", help="generated site directory")
+    parser.add_argument(
+        "--baseurl",
+        default="",
+        help="published project path, for example /Energy-Photonics-Lab",
+    )
+    args = parser.parse_args()
+    site = Path(args.site).resolve()
+    baseurl = "/" + args.baseurl.strip("/") if args.baseurl.strip("/") else ""
     if not site.is_dir():
         print(f"ERROR: site directory not found: {site}")
         return 2
@@ -73,7 +84,7 @@ def main() -> int:
         parser = ReferenceParser()
         parser.feed(text)
         for attr, raw in parser.references:
-            candidates = candidate_paths(site, page, raw)
+            candidates = candidate_paths(site, page, raw, baseurl)
             if candidates and not any(p.exists() for p in candidates):
                 shown = ", ".join(str(p.relative_to(site)) if p.is_relative_to(site) else str(p) for p in candidates)
                 errors.append(f"{page.relative_to(site)}: missing {attr}={raw!r}; checked {shown}")

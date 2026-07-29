@@ -8,6 +8,8 @@ Validation completed on July 29, 2026.
 - Verified that each rendered page has exactly one `h1` and no duplicate HTML IDs.
 - Verified that every image has alternative text.
 - Verified all local page, stylesheet, favicon, and image references.
+- Verified that generated navigation, stylesheet, image, canonical, sitemap, and
+  social-preview URLs include the `/Energy-Photonics-Lab` project path.
 - Verified the integrity of all JPEG, PNG, and SVG image files.
 - Confirmed that published page source contains no references to `alokg.umbc.edu/wp-content/uploads`.
 - Reviewed desktop rendering at 1440 pixels wide.
