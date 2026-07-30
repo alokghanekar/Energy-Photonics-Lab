@@ -8,6 +8,8 @@
   --border: #e4e9ef;
   --surface: #f7f9fb;
   --white: #ffffff;
+  --umbc-dark-gray: #636466;
+  --umbc-light-gray: #c7c8ca;
   --content-width: 960px;
 }
 
@@ -41,8 +43,33 @@ a:focus-visible, button:focus-visible { outline: 3px solid #f5c542; outline-offs
 }
 .skip-link:focus { top: 1rem; }
 
-.site-header { background: var(--navy); color: var(--white); }
-.header-inner { max-width: 1120px; margin: 0 auto; padding: 1.4rem 2rem 0; }
+.site-header {
+  position: relative;
+  overflow: hidden;
+  background: #000000;
+  color: var(--white);
+}
+.site-header::after {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(46vw, 560px);
+  background:
+    linear-gradient(to right, #000000 0%, transparent 58%),
+    linear-gradient(45deg, var(--umbc-dark-gray) 25%, transparent 25%, transparent 75%, var(--umbc-dark-gray) 75%),
+    linear-gradient(45deg, var(--umbc-light-gray) 25%, transparent 25%, transparent 75%, var(--umbc-light-gray) 75%);
+  background-position: 0 0, 0 0, 24px 24px;
+  background-size: auto, 48px 48px, 48px 48px;
+  content: "";
+  opacity: 0.42;
+  pointer-events: none;
+}
+.header-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.4rem 2rem 0;
+}
 .lab-name {
   display: inline-block;
   color: var(--white);
@@ -144,6 +171,7 @@ sub { line-height: 0; }
 .footer-address { color: #b2c4da; }
 
 @media (max-width: 760px) {
+  .site-header::after { width: 46%; opacity: 0.3; }
   .header-inner { padding: 1.2rem 1rem 0; }
   .lab-sub span { display: none; }
   .lab-sub span::after { content: ""; }
