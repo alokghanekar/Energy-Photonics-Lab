@@ -8,8 +8,6 @@
   --border: #e4e9ef;
   --surface: #f7f9fb;
   --white: #ffffff;
-  --umbc-dark-gray: #636466;
-  --umbc-light-gray: #c7c8ca;
   --content-width: 960px;
 }
 
@@ -44,28 +42,15 @@ a:focus-visible, button:focus-visible { outline: 3px solid #f5c542; outline-offs
 .skip-link:focus { top: 1rem; }
 
 .site-header {
-  position: relative;
-  overflow: hidden;
-  background: #000000;
+  background-color: #000000;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.34)),
+    url("../images/umbc-maryland-pattern.jpg");
+  background-position: center;
+  background-size: cover;
   color: var(--white);
 }
-.site-header::after {
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: min(46vw, 560px);
-  background:
-    linear-gradient(to right, #000000 0%, transparent 58%),
-    linear-gradient(45deg, var(--umbc-dark-gray) 25%, transparent 25%, transparent 75%, var(--umbc-dark-gray) 75%),
-    linear-gradient(45deg, var(--umbc-light-gray) 25%, transparent 25%, transparent 75%, var(--umbc-light-gray) 75%);
-  background-position: 0 0, 0 0, 24px 24px;
-  background-size: auto, 48px 48px, 48px 48px;
-  content: "";
-  opacity: 0.42;
-  pointer-events: none;
-}
 .header-inner {
-  position: relative;
-  z-index: 1;
   max-width: 1120px;
   margin: 0 auto;
   padding: 1.4rem 2rem 0;
@@ -164,14 +149,23 @@ sub { line-height: 0; }
 .button-link { display: inline-block; padding: 0.65rem 1rem; border-radius: 0.25rem; background: var(--navy); color: var(--white); text-decoration: none; font-weight: 650; }
 .button-link:hover { color: var(--white); background: var(--navy-light); }
 
-.site-footer { margin-top: auto; background: var(--navy); color: #c4d4e8; text-align: center; }
+.site-footer {
+  margin-top: auto;
+  background-color: #000000;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.42)),
+    url("../images/umbc-maryland-pattern.jpg");
+  background-position: center;
+  background-size: cover;
+  color: #e3e3e3;
+  text-align: center;
+}
 .footer-inner { max-width: 1120px; margin: 0 auto; padding: 1.4rem 2rem; }
 .site-footer p { margin: 0.2rem 0; font-size: 0.86rem; }
-.site-footer a { color: #dce8f5; }
-.footer-address { color: #b2c4da; }
+.site-footer a { color: var(--white); }
+.footer-address { color: #d0d0d0; }
 
 @media (max-width: 760px) {
-  .site-header::after { width: 46%; opacity: 0.3; }
   .header-inner { padding: 1.2rem 1rem 0; }
   .lab-sub span { display: none; }
   .lab-sub span::after { content: ""; }
