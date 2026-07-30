@@ -115,9 +115,9 @@ sub { line-height: 0; }
 
 .research-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(240px, 0.8fr);
-  gap: 2rem;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.15rem;
+  align-items: start;
   margin: 2rem 0;
   padding: 1.5rem 0;
   border-top: 1px solid var(--border);
@@ -125,7 +125,14 @@ sub { line-height: 0; }
 .research-row + .research-row { margin-top: 0; }
 .section-heading { margin-top: 0; text-transform: none; letter-spacing: 0; font-size: 1.08rem; }
 .research-fig { margin: 0; text-align: center; }
-.research-fig img { display: block; width: 100%; border: 1px solid var(--border); }
+.research-fig-wide { width: 100%; }
+.research-fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  background: var(--white);
+}
 .research-fig figcaption { margin-top: 0.55rem; color: var(--muted); font-size: 0.86rem; font-style: italic; line-height: 1.45; }
 
 .interest-list { margin: 1rem 0 1rem 1.4rem; padding: 0; line-height: 1.9; }
@@ -200,7 +207,7 @@ sub { line-height: 0; }
   .primary-nav a { height: 100%; padding: 0.7rem 0.65rem; border-radius: 0; text-align: center; }
   .site-main { margin: 1.8rem auto; padding: 0 1rem 2.5rem; }
   .research-row { grid-template-columns: 1fr; gap: 1rem; }
-  .research-fig { max-width: 560px; }
+  .research-fig { max-width: none; }
   .research-themes, .project-grid { grid-template-columns: 1fr; }
 }
 
