@@ -137,7 +137,7 @@ sub { line-height: 0; }
   align-items: start;
   margin: 1.25rem 0 2rem;
 }
-.person img { width: 120px; height: 120px; object-fit: cover; object-position: center top; border: 1px solid #d4d9df; border-radius: 0.2rem; background: var(--surface); }
+.person img { width: 120px; height: auto; border: 1px solid #d4d9df; border-radius: 0.2rem; background: var(--surface); }
 .person-info .name { margin-top: 0; }
 .person-info .role { margin: 0.1rem 0 0.4rem; color: var(--muted); font-size: 0.94rem; }
 .person-info p { margin: 0.35rem 0 0; font-size: 0.96rem; }
@@ -207,7 +207,7 @@ sub { line-height: 0; }
 @media (max-width: 480px) {
   body { font-size: 15px; }
   .person { grid-template-columns: 84px minmax(0, 1fr); gap: 1rem; }
-  .person img { width: 84px; height: 84px; }
+  .person img { width: 84px; height: auto; }
   .member-since { display: block; margin-top: 0.1rem; }
   .footer-inner { padding: 1.2rem 1rem; }
 }
