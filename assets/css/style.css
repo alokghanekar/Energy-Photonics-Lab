@@ -60,13 +60,18 @@ a:focus-visible, button:focus-visible { outline: 3px solid #f5c542; outline-offs
 .site-header {
   background-color: #000000;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+    linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.18)),
     url("../images/band_band.jpg");
   background-position: center;
   background-size: cover;
   border-bottom: 4px solid var(--umbc-gold);
   color: var(--white);
 }
+/* Keep the white header text legible over the bright filaments now that
+   the darkening overlay is light. */
+.lab-name,
+.lab-sub,
+.primary-nav a { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85); }
 .header-inner {
   max-width: var(--content-width);
   margin: 0 auto;
