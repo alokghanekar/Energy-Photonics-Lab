@@ -59,9 +59,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid #f5c542; outline-offs
 
 .site-header {
   background-color: #000000;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.18)),
-    url("../images/band_band.jpg");
+  background-image: url("../images/band_band.jpg");
   background-position: center;
   background-size: cover;
   border-bottom: 4px solid var(--umbc-gold);
