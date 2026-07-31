@@ -5,33 +5,30 @@ permalink: /
 description: The Energy Photonics Lab at UMBC studies active metasurfaces, infrared nanophotonics, thermal radiation, energy harvesting, and thermal management.
 ---
 <style>
-  /* The research figures contain dense scientific text. Give them substantially
-     more physical screen area instead of relying only on higher file resolution. */
   .home-intro {
     max-width: 1000px;
   }
 
-  .research-fig-bic {
+  .research-fig-bic,
+  .research-fig-tpv {
     max-width: none;
     justify-self: stretch;
   }
 
-  .research-fig-bic img,
-  .tpv-schematic-crop img {
-    image-rendering: -webkit-optimize-contrast;
+  .research-fig-tpv {
+    width: 100%;
   }
 
-  .tpv-image-pair {
-    grid-template-columns: 1fr;
-    gap: 1.75rem;
-    align-items: start;
-    max-width: 980px;
-    margin: 0 auto;
+  .research-fig-tpv .figure-zoom {
+    display: block;
+    width: 100%;
   }
 
-  .tpv-schematic-crop {
-    width: min(100%, 860px);
-    margin: 0 auto;
+  .research-fig-tpv img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 
   @media (min-width: 1051px) {
@@ -53,7 +50,7 @@ description: The Energy Photonics Lab at UMBC studies active metasurfaces, infra
 
     .research-fig-bic,
     .research-fig-tpv {
-      width: min(100%, 820px);
+      width: min(100%, 980px);
       margin: 0 auto;
     }
   }
@@ -71,8 +68,8 @@ description: The Energy Photonics Lab at UMBC studies active metasurfaces, infra
     <p>We study nanostructures and microstructures for manipulating light-matter interactions. We design metamaterials that violate common generalizations associated with thermal-radiation phenomena.</p>
   </div>
   <figure class="research-fig research-fig-bic">
-    <a class="figure-zoom" href="{{ '/assets/images/home-bic-symmetry.png' | relative_url }}?v=3" aria-label="Open the BIC symmetry-breaking figure at full resolution">
-      <img src="{{ '/assets/images/home-bic-symmetry.png' | relative_url }}?v=3" alt="Emissivity spectra for symmetric and symmetry-broken infrared gratings, together with a temporal coupled-mode-theory mapping of peak emissivity versus symmetry perturbation" width="1465" height="854" decoding="async">
+    <a class="figure-zoom" href="{{ '/assets/images/home-bic-symmetry.png' | relative_url }}?v=4" aria-label="Open the BIC symmetry-breaking figure at full resolution">
+      <img src="{{ '/assets/images/home-bic-symmetry.png' | relative_url }}?v=4" alt="Emissivity spectra for symmetric and symmetry-broken infrared gratings, together with a temporal coupled-mode-theory mapping of peak emissivity versus symmetry perturbation" width="1465" height="854" decoding="async">
     </a>
     <figcaption>Electro-optic symmetry breaking activates a symmetry-protected infrared mode and controls its peak emissivity. Select the image to view it at full resolution.</figcaption>
   </figure>
@@ -84,13 +81,10 @@ description: The Energy Photonics Lab at UMBC studies active metasurfaces, infra
     <p>We study energy materials for thermophotovoltaic energy conversion through selective thermal emitters that could support energy harvesting and waste-heat recovery. We are also interested in dynamic radiative cooling and thermal regulation using phase-change media.</p>
   </div>
   <figure class="research-fig research-fig-tpv">
-    <div class="tpv-image-pair">
-      <img class="tpv-panel tpv-spectra-vector" src="{{ '/assets/images/home-tpv-spectra.svg' | relative_url }}?v=3" alt="TPV emitter emissivity, photovoltaic quantum efficiency, emitted power, useful electrical output, and long-wavelength wasted energy" width="900" height="900" loading="lazy" decoding="async">
-      <a class="tpv-panel tpv-schematic-crop figure-zoom" href="{{ '/assets/images/home-tpv-system.png' | relative_url }}?v=3" aria-label="Open the complete thermophotovoltaic spectra and system figure at full resolution">
-        <img src="{{ '/assets/images/home-tpv-system.png' | relative_url }}?v=3" alt="Thermophotovoltaic system with a heat source, selective absorber, tungsten layer, thermal emitter, photovoltaic cell, and voltage output" width="1483" height="653" loading="lazy" decoding="async">
-      </a>
-    </div>
-    <figcaption>Spectral matching of a selective thermal emitter and photovoltaic cell for thermophotovoltaic energy conversion. The spectra are rendered as vectors for sharp text and curves at every screen resolution.</figcaption>
+    <a class="figure-zoom" href="{{ '/assets/images/home-tpv-system.png' | relative_url }}?v=4" aria-label="Open the complete thermophotovoltaic spectra and system figure at full resolution">
+      <img src="{{ '/assets/images/home-tpv-system.png' | relative_url }}?v=4" alt="Thermophotovoltaic spectra and system schematic showing emitter response, useful electrical output, wasted long-wavelength energy, a selective absorber, thermal emitter, and photovoltaic cell" width="1483" height="653" loading="lazy" decoding="async">
+    </a>
+    <figcaption>Spectral matching of a selective thermal emitter and photovoltaic cell for thermophotovoltaic energy conversion.</figcaption>
   </figure>
 </section>
 
