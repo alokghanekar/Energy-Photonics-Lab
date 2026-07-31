@@ -60,8 +60,8 @@ a:focus-visible, button:focus-visible { outline: 3px solid #f5c542; outline-offs
 .site-header {
   background-color: #000000;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.34)),
-    url("../images/umbc-maryland-pattern.jpg");
+    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+    url("../images/band_band.jpg");
   background-position: center;
   background-size: cover;
   border-bottom: 4px solid var(--umbc-gold);
