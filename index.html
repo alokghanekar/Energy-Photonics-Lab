@@ -4,6 +4,61 @@ title: Home
 permalink: /
 description: The Energy Photonics Lab at UMBC studies active metasurfaces, infrared nanophotonics, thermal radiation, energy harvesting, and thermal management.
 ---
+<style>
+  /* The research figures contain dense scientific text. Give them substantially
+     more physical screen area instead of relying only on higher file resolution. */
+  .home-intro {
+    max-width: 1000px;
+  }
+
+  .research-fig-bic {
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  .research-fig-bic img,
+  .tpv-schematic-crop img {
+    image-rendering: -webkit-optimize-contrast;
+  }
+
+  .tpv-image-pair {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    align-items: start;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .tpv-schematic-crop {
+    width: min(100%, 860px);
+    margin: 0 auto;
+  }
+
+  @media (min-width: 1051px) {
+    .site-main {
+      max-width: 1360px;
+    }
+
+    .research-row {
+      grid-template-columns: minmax(270px, 310px) minmax(0, 1fr);
+      gap: 2.75rem;
+    }
+  }
+
+  @media (min-width: 761px) and (max-width: 1050px) {
+    .research-row {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .research-fig-bic,
+    .research-fig-tpv {
+      width: min(100%, 820px);
+      margin: 0 auto;
+    }
+  }
+</style>
+
 <h1>Home</h1>
 <div class="home-intro">
   <p>Our research focuses on nanostructured materials and their interactions with infrared thermal radiation. We design these materials to control and tune their thermal emission properties, enabling applications in energy harvesting, infrared detection, and thermal camouflage for defense purposes.</p>
@@ -16,8 +71,8 @@ description: The Energy Photonics Lab at UMBC studies active metasurfaces, infra
     <p>We study nanostructures and microstructures for manipulating light-matter interactions. We design metamaterials that violate common generalizations associated with thermal-radiation phenomena.</p>
   </div>
   <figure class="research-fig research-fig-bic">
-    <a class="figure-zoom" href="{{ '/assets/images/home-bic-symmetry.png' | relative_url }}" aria-label="Open the BIC symmetry-breaking figure at full resolution">
-      <img src="{{ '/assets/images/home-bic-symmetry.png' | relative_url }}" alt="Emissivity spectra for symmetric and symmetry-broken infrared gratings, together with a temporal coupled-mode-theory mapping of peak emissivity versus symmetry perturbation" width="1465" height="854" decoding="async">
+    <a class="figure-zoom" href="{{ '/assets/images/home-bic-symmetry.png' | relative_url }}?v=3" aria-label="Open the BIC symmetry-breaking figure at full resolution">
+      <img src="{{ '/assets/images/home-bic-symmetry.png' | relative_url }}?v=3" alt="Emissivity spectra for symmetric and symmetry-broken infrared gratings, together with a temporal coupled-mode-theory mapping of peak emissivity versus symmetry perturbation" width="1465" height="854" decoding="async">
     </a>
     <figcaption>Electro-optic symmetry breaking activates a symmetry-protected infrared mode and controls its peak emissivity. Select the image to view it at full resolution.</figcaption>
   </figure>
@@ -30,9 +85,9 @@ description: The Energy Photonics Lab at UMBC studies active metasurfaces, infra
   </div>
   <figure class="research-fig research-fig-tpv">
     <div class="tpv-image-pair">
-      <img class="tpv-panel tpv-spectra-vector" src="{{ '/assets/images/home-tpv-spectra.svg' | relative_url }}" alt="TPV emitter emissivity, photovoltaic quantum efficiency, emitted power, useful electrical output, and long-wavelength wasted energy" width="900" height="900" loading="lazy" decoding="async">
-      <a class="tpv-panel tpv-schematic-crop figure-zoom" href="{{ '/assets/images/home-tpv-system.png' | relative_url }}" aria-label="Open the complete thermophotovoltaic spectra and system figure at full resolution">
-        <img src="{{ '/assets/images/home-tpv-system.png' | relative_url }}" alt="Thermophotovoltaic system with a heat source, selective absorber, tungsten layer, thermal emitter, photovoltaic cell, and voltage output" width="1483" height="653" loading="lazy" decoding="async">
+      <img class="tpv-panel tpv-spectra-vector" src="{{ '/assets/images/home-tpv-spectra.svg' | relative_url }}?v=3" alt="TPV emitter emissivity, photovoltaic quantum efficiency, emitted power, useful electrical output, and long-wavelength wasted energy" width="900" height="900" loading="lazy" decoding="async">
+      <a class="tpv-panel tpv-schematic-crop figure-zoom" href="{{ '/assets/images/home-tpv-system.png' | relative_url }}?v=3" aria-label="Open the complete thermophotovoltaic spectra and system figure at full resolution">
+        <img src="{{ '/assets/images/home-tpv-system.png' | relative_url }}?v=3" alt="Thermophotovoltaic system with a heat source, selective absorber, tungsten layer, thermal emitter, photovoltaic cell, and voltage output" width="1483" height="653" loading="lazy" decoding="async">
       </a>
     </div>
     <figcaption>Spectral matching of a selective thermal emitter and photovoltaic cell for thermophotovoltaic energy conversion. The spectra are rendered as vectors for sharp text and curves at every screen resolution.</figcaption>
