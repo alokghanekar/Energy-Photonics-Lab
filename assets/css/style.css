@@ -10,7 +10,7 @@
   --white: #ffffff;
   --umbc-gold: #fdb515;
   --umbc-gold-dark: #c98d00;
-  --content-width: 960px;
+  --content-width: 1200px;
 }
 
 * { box-sizing: border-box; }
@@ -43,6 +43,20 @@ a:focus-visible, button:focus-visible { outline: 3px solid #f5c542; outline-offs
 }
 .skip-link:focus { top: 1rem; }
 
+/* Hidden from view but available to screen readers and search engines,
+   so pages keep an <h1> without showing a redundant on-page title. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .site-header {
   background-color: #000000;
   background-image:
@@ -54,7 +68,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid #f5c542; outline-offs
   color: var(--white);
 }
 .header-inner {
-  max-width: 1120px;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 1.4rem 2rem 0;
 }
@@ -240,7 +254,7 @@ sub { line-height: 0; }
   color: #e3e3e3;
   text-align: center;
 }
-.footer-inner { max-width: 1120px; margin: 0 auto; padding: 1.4rem 2rem; }
+.footer-inner { max-width: var(--content-width); margin: 0 auto; padding: 1.4rem 2rem; }
 .site-footer p { margin: 0.2rem 0; font-size: 0.86rem; }
 .site-footer a { color: var(--white); }
 .footer-address { color: #d0d0d0; }
