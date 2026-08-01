@@ -62,7 +62,7 @@ description: Instruments and computational resources in the Energy Photonics Lab
 <div class="project-grid">
   <section class="project">
     <h2>Multiphysics modeling</h2>
-    <p>COMSOL Multiphysics licenses covering electromagnetics, heat transfer, and CFD. Optical response and the resulting temperature field are solved together rather than separately, which matters whenever absorbed power and the thermal boundary condition depend on each other.</p>
+    <p>COMSOL Multiphysics licenses covering electromagnetics, heat transfer, and CFD. Optical response and the resulting temperature field can be solved together. </p>
   </section>
 
   <section class="project">
@@ -72,32 +72,18 @@ description: Instruments and computational resources in the Energy Photonics Lab
   </section>
 
   <section class="project">
-    <h2>Periodic and modal analysis</h2>
-    <p>Rigorous coupled-wave analysis for periodic metasurfaces, with temporal coupled-mode theory fitting to separate radiative from absorptive decay. That separation is what allows linewidth and peak emissivity to be specified as independent design targets, and it is how a resonance is deliberately tuned toward critical coupling rather than found by parameter sweep.</p>
-    <p>RCWA is the workhorse for periodic geometries: because it solves in the Fourier domain on a discrete set of diffraction orders, a full sweep over wavelength, incident angle, and polarization runs in a fraction of the time a general finite-element solve would take, which is what makes broad design-space exploration practical.</p>
-  </section>
-
-  <section class="project">
-    <h2>Reduced-order thermal models and control</h2>
-    <p>Resistance&ndash;capacitance thermal network models identified from measured or simulated data, for building zones, enclosures, and battery packs. A detailed CFD solve answers what the temperature field is; an RC model runs fast enough to sit inside a controller or a year-long energy simulation.</p>
-    <p>We use these for model-predictive and learning-based control of HVAC and thermal systems, and we validate control strategies against physical hardware rather than against the model that produced them.</p>
-  </section>
-
-  <section class="project">
     <h2>Local compute</h2>
-    <p>Five 20-core workstations plus a 128-core Intel Xeon Platinum workstation with 256&nbsp;GB of memory, dedicated to the group. Sufficient for full parameter sweeps over geometry, angle, and wavelength without queueing.</p>
+    <p>Five 20-core workstations plus a 128-core Intel Xeon Platinum workstation with 256&nbsp;GB of memory, dedicated to the group. </p>
   </section>
 
   <section class="project">
     <h2>UMBC High Performance Computing Facility</h2>
-    <p>Access to UMBC's HPC clusters, including the GPU cluster: 13 nodes with dual 24-core Cascade Lake CPUs and 384&nbsp;GB of memory each, totalling 104 GPUs. Used for large-scale optimization and inverse design, and for the learning-based control work in our thermal systems projects.</p>
+    <p>Access to UMBC's HPC clusters, including the GPU cluster: 13 nodes with dual 24-core Cascade Lake CPUs and 384&nbsp;GB of memory each, totalling 104 GPUs.</p>
     <p><a href="https://hpcf.umbc.edu" rel="noopener">UMBC HPCF &rarr;</a></p>
   </section>
 </div>
 
 <h2 class="section-label">Nanofabrication access</h2>
-
-<p>We do not operate our own cleanroom. We fabricate through two shared facilities within driving distance, which between them cover the range from rapid maskless prototyping to sub-100&nbsp;nm electron-beam patterning.</p>
 
 <div class="project-grid">
   <section class="project">
@@ -107,5 +93,5 @@ description: Instruments and computational resources in the Energy Photonics Lab
 </div>
 
 <div class="join-note">
-  <p>Need a measurement, or want to know whether a problem is a fit? See <a href="{{ '/collaborate.html' | relative_url }}">Collaborate with us</a> for the routes available, or email <a href="mailto:{{ site.email }}?subject=%5BCollaboration%5D%20">{{ site.email }}</a> with your target wavelength band, operating temperature, and any angular requirement.</p>
+  <p>Need a measurement, or want to collaborate? See <a href="{{ '/collaborate.html' | relative_url }}">Collaborate with us</a> for the routes available, or email <a href="mailto:{{ site.email }}?subject=%5BCollaboration%5D%20">{{ site.email }}</a> with your target wavelength band, operating temperature, and any angular requirement.</p>
 </div>
