@@ -5,33 +5,29 @@ permalink: /
 description: The Energy Photonics Lab at UMBC studies active metasurfaces, infrared nanophotonics, thermal radiation, energy harvesting, and thermal management.
 ---
 <style>
-  .home-intro,
-  .research-text {
+  .home-intro { width: 100%; max-width: none; }
+
+  /* Two-column research sections: text on the left, figure on the right. */
+  .research-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .research-text { width: 100%; max-width: none; }
+
+  .research-fig { margin: 0; }
+
+  .research-fig-bic,
+  .research-fig-tpv {
     width: 100%;
     max-width: none;
+    justify-self: stretch;
   }
 
-  /* Each research section now reads continuously across the page, with its
-     figure centered below instead of competing with the text in a side column. */
-  .research-row {
-    display: block;
-  }
-
-  .research-fig {
-    margin: 1.4rem auto 0;
-  }
-
-  .research-fig-bic {
-    width: min(100%, 1000px);
-    max-width: 1000px;
-  }
-
-  .research-fig-tpv {
-    width: min(100%, 820px);
-    max-width: 820px;
-  }
-
-  .research-fig-bic img {
+  .research-fig-bic img,
+  .figure-zoom {
     display: block;
     width: 100%;
     height: auto;
@@ -59,6 +55,11 @@ description: The Energy Photonics Lab at UMBC studies active metasurfaces, infra
     height: 100%;
     border: 0;
     background: var(--white);
+  }
+
+  /* Stack to a single column on narrow screens. */
+  @media (max-width: 760px) {
+    .research-row { grid-template-columns: 1fr; gap: 1.25rem; }
   }
 </style>
 
