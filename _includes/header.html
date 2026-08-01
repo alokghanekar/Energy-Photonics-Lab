@@ -4,7 +4,7 @@
     <p class="lab-sub">Department of Mechanical Engineering <span aria-hidden="true">·</span> University of Maryland, Baltimore County</p>
     <nav class="primary-nav" aria-label="Primary navigation">
       <ul>
-        {% assign nav_items = "Home|/,Research|/research.html,Facilities|/facilities.html,Collaborate|/collaborate.html,Publications|/publications.html,People|/people.html,News|/news.html,Join Us|/prospective.html" | split: "," %}
+        {% assign nav_items = "Home|/,Research|/research.html,Facilities|/facilities.html,Collaborate|/collaborate.html,Publications|/publications.html,People|/people.html,News|/news.html,Funding &amp; Awards|/funding-and-awards.html,Join Us|/prospective.html" | split: "," %}
         {% for item in nav_items %}
           {% assign parts = item | split: "|" %}
           {% assign label = parts[0] %}
