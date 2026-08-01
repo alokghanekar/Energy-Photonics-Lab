@@ -1,0 +1,124 @@
+---
+layout: default
+title: Facilities and capabilities — infrared characterization, thermal and CFD simulation, and nanophotonic design
+permalink: /facilities.html
+description: Instruments and computational resources in the Energy Photonics Lab at UMBC, including FTIR reflectance from 700 nm to 15 micron, variable-angle measurement from 5 to 75 degrees, electron microscopy, cleanroom access, and COMSOL Multiphysics simulation with the Heat Transfer and CFD modules for conjugate heat transfer, electronics cooling, battery thermal, and HVAC system modeling.
+---
+<h1>Facilities and capabilities</h1>
+
+<p class="page-lead">What we can design, measure, and fabricate. This page is written for collaborators and sponsors deciding whether we can address a specific technical problem. Our own laboratory occupies roughly 900&nbsp;ft&sup2; in the Engineering building at UMBC, and we draw on shared electron microscopy, high-performance computing, and cleanroom facilities beyond it.</p>
+
+<h2 class="section-label">Infrared characterization</h2>
+
+<div class="project-grid">
+  <section class="project">
+    <h2>FTIR spectroscopy, 700&nbsp;nm to 15&nbsp;&micro;m</h2>
+    <p>Fourier-transform infrared spectrometer with an integrating sphere for hemispherical reflectance measurement across the full mid- and long-wave infrared. The range spans both atmospheric transmission windows — 3–5&nbsp;&micro;m and 8–13&nbsp;&micro;m — as well as the near-infrared bands relevant to thermophotovoltaic conversion.</p>
+    <p>For opaque samples, Kirchhoff's law gives spectral emissivity directly from measured reflectance: &epsilon;(&lambda;)&nbsp;=&nbsp;1&nbsp;&minus;&nbsp;R(&lambda;). The integrating sphere captures diffusely scattered light as well as the specular component, so this holds for rough and textured surfaces, not only polished ones.</p>
+  </section>
+
+  <section class="project">
+    <h2>Variable-angle reflectance, 5&deg; to 75&deg;</h2>
+    <p>Harrick Seagull variable-angle accessory covering the same 700&nbsp;nm to 15&nbsp;&micro;m range, with incident angle continuously variable from 5&deg; to 75&deg;. A matched pair of infrared polarizers on the input and output arms allows independent selection of incident and analyzed polarization.</p>
+    <p>Angular response is not a refinement — it is often the requirement. A surface designed for radiative cooling has to work across the sky view, a signature-management surface is viewed off-axis by definition, and a TPV emitter sits inside a cavity where most of the radiation is oblique. Normal-incidence data alone will not tell you whether a design meets any of those.</p>
+  </section>
+
+  <section class="project">
+    <h2>Polarization conversion</h2>
+    <p>Because the input and output polarizers are set independently, we measure the full set of co- and cross-polarized reflectances — <em>R</em><sub>ss</sub>, <em>R</em><sub>pp</sub>, <em>R</em><sub>sp</sub>, and <em>R</em><sub>ps</sub> — rather than total reflectance alone.</p>
+    <p>Cross-polarized signal is the direct experimental signature of broken symmetry. A structure that converts s to p is one whose unit cell lacks the mirror symmetry that would forbid it, so <em>R</em><sub>sp</sub> measures the asymmetry itself instead of inferring it from a lineshape. This is the measurement that distinguishes a chiral or anisotropic emitter from a merely lossy one, and few laboratories offer it in the infrared.</p>
+  </section>
+
+  <section class="project">
+    <h2>Visible and near-infrared, 300&nbsp;nm to 1100&nbsp;nm</h2>
+    <p>Ocean Optics USB-2000 FL spectrophotometer for reflection and transmission measurements, covering the solar band. Used together with the infrared instruments when a surface has to satisfy competing requirements — high solar reflectance and high infrared emittance, for instance, as passive cooling coatings must.</p>
+  </section>
+
+  <section class="project">
+    <h2>Thin-film optical constants</h2>
+    <p>Angstrom Sun TFProbe 2.4 spectroscopic reflectometer for film-thickness measurement and extraction of effective <em>n</em> and <em>k</em>.</p>
+    <p>This is what makes a design predictive rather than fitted after the fact: with measured optical constants for your actual deposited film, simulation results correspond to the material you can manufacture, not to a handbook value.</p>
+  </section>
+</div>
+
+<h2 class="section-label">Measurement specifications</h2>
+
+<table class="spec-table">
+  <caption>Summary of characterization capability</caption>
+  <tbody>
+    <tr><th scope="row">Infrared range</th><td>700&nbsp;nm &ndash; 15&nbsp;&micro;m (FTIR, integrating sphere and variable-angle accessory)</td></tr>
+    <tr><th scope="row">Visible / near-IR range</th><td>300 &ndash; 1100&nbsp;nm (reflection and transmission)</td></tr>
+    <tr><th scope="row">Incident angle</th><td>5&deg; &ndash; 75&deg; variable; near-normal hemispherical via integrating sphere</td></tr>
+    <tr><th scope="row">Quantities measured</th><td>Reflectance, transmittance, absorptance; spectral emissivity for opaque samples via Kirchhoff's law; film thickness and effective <em>n</em>, <em>k</em></td></tr>
+    <tr><th scope="row">Polarization</th><td>Independent input and output polarizers: co-polarized (<em>R</em><sub>ss</sub>, <em>R</em><sub>pp</sub>) and cross-polarized (<em>R</em><sub>sp</sub>, <em>R</em><sub>ps</sub>) reflectance</td></tr>
+    <tr><th scope="row">Sample temperature</th><td>[TODO: currently room temperature. If you have or add a heated stage, state the range here — it is the capability companies ask about most]</td></tr>
+    <tr><th scope="row">Sample size</th><td>Variable-angle stage: 1.5&nbsp;&times;&nbsp;1.5&nbsp;cm to 3&nbsp;&times;&nbsp;3&nbsp;cm. Integrating sphere: 1.5&nbsp;&times;&nbsp;1.5&nbsp;cm minimum<!-- TODO: state an upper limit for the sphere if one applies --></td></tr>
+    <tr><th scope="row">Typical turnaround</th><td>1&ndash;2 business days once the sample is in hand</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section-label">Surface and structural characterization</h2>
+
+<p>Through the UMBC Keith R. Porter Imaging Facility we have access to an FEI Nova NanoSEM 450 scanning electron microscope with EDS for compositional analysis, a Bruker Dimension Edge atomic force microscope for surface topography, and a Hitachi HT7800 transmission electron microscope.</p>
+
+<p>In practice this closes the loop on fabricated structures: SEM confirms that the patterned geometry matches the design, AFM quantifies the surface roughness that sets scattering losses, and EDS verifies composition. When measured spectra depart from simulation, these are the tools that tell you whether the cause is geometry, material, or the model.</p>
+
+<h2 class="section-label">Design and simulation</h2>
+
+<div class="project-grid">
+  <section class="project">
+    <h2>Multiphysics modeling</h2>
+    <p>COMSOL Multiphysics licenses covering electromagnetics, heat transfer, and CFD. Optical response and the resulting temperature field are solved together rather than separately, which matters whenever absorbed power and the thermal boundary condition depend on each other.</p>
+  </section>
+
+  <section class="project">
+    <h2>Heat transfer and CFD</h2>
+    <p>The COMSOL Heat Transfer and CFD modules support conjugate heat transfer, natural and forced convection, and coupled fluid&ndash;solid&ndash;radiation problems: electronics and power-module cooling, battery pack thermal behavior, heat exchanger and cold plate performance, enclosure and duct flow, and airflow in occupied spaces.</p>
+    <p>Radiation is included as a physical participant rather than a lumped coefficient. In enclosures, at elevated temperature, or wherever convection is weak, treating radiative exchange with a single emissivity number is often where a thermal model departs from measurement.</p>
+  </section>
+
+  <section class="project">
+    <h2>Periodic and modal analysis</h2>
+    <p>Rigorous coupled-wave analysis for periodic metasurfaces, with temporal coupled-mode theory fitting to separate radiative from absorptive decay. That separation is what allows linewidth and peak emissivity to be specified as independent design targets, and it is how a resonance is deliberately tuned toward critical coupling rather than found by parameter sweep.</p>
+    <p>RCWA is the workhorse for periodic geometries: because it solves in the Fourier domain on a discrete set of diffraction orders, a full sweep over wavelength, incident angle, and polarization runs in a fraction of the time a general finite-element solve would take, which is what makes broad design-space exploration practical.</p>
+  </section>
+
+  <section class="project">
+    <h2>Reduced-order thermal models and control</h2>
+    <p>Resistance&ndash;capacitance thermal network models identified from measured or simulated data, for building zones, enclosures, and battery packs. A detailed CFD solve answers what the temperature field is; an RC model runs fast enough to sit inside a controller or a year-long energy simulation.</p>
+    <p>We use these for model-predictive and learning-based control of HVAC and thermal systems, and we validate control strategies against physical hardware rather than against the model that produced them.</p>
+  </section>
+
+  <section class="project">
+    <h2>Local compute</h2>
+    <p>Five 20-core workstations plus a 128-core Intel Xeon Platinum workstation with 256&nbsp;GB of memory, dedicated to the group. Sufficient for full parameter sweeps over geometry, angle, and wavelength without queueing.</p>
+  </section>
+
+  <section class="project">
+    <h2>UMBC High Performance Computing Facility</h2>
+    <p>Access to UMBC's HPC clusters, including the GPU cluster: 13 nodes with dual 24-core Cascade Lake CPUs and 384&nbsp;GB of memory each, totalling 104 GPUs. Used for large-scale optimization and inverse design, and for the learning-based control work in our thermal systems projects.</p>
+    <p><a href="https://hpcf.umbc.edu" rel="noopener">UMBC HPCF &rarr;</a></p>
+  </section>
+</div>
+
+<h2 class="section-label">Nanofabrication access</h2>
+
+<p>We do not operate our own cleanroom. We fabricate through two shared facilities within driving distance, which between them cover the range from rapid maskless prototyping to sub-100&nbsp;nm electron-beam patterning.</p>
+
+<div class="project-grid">
+  <section class="project">
+    <h2>Maryland NanoCenter</h2>
+    <p>Thirty-five minutes from campus. Lithography including a Raith e_LiNE electron-beam system, a Heidelberg MLA150 maskless aligner, and an MJB-3 mask aligner, together with sputtering and deposition systems.</p>
+    <p>This is our usual route for iterating on a design — maskless exposure means a geometry change does not require a new mask.</p>
+  </section>
+
+  <section class="project">
+    <h2>Singh Center for Nanotechnology, University of Pennsylvania</h2>
+    <p>Ninety minutes by train or car. The Quattrone Nanofabrication Facility provides a Heidelberg DWL 66+ laser writer, a Raith EBPG5200+ electron-beam lithography system, a MicroWriter ML3 Pro, and a SUSS MicroTec MA-6 mask aligner, with the associated resist processing infrastructure. On-site characterization includes JEOL 7500F and Quanta 600 FEG scanning electron microscopes.</p>
+    <p>Used when a design calls for the finest features or the highest placement accuracy.</p>
+  </section>
+</div>
+
+<div class="join-note">
+  <p>Need a measurement, or want to know whether a problem is a fit? See <a href="{{ '/collaborate.html' | relative_url }}">Collaborate with us</a> for the routes available, or email <a href="mailto:{{ site.email }}?subject=%5BCollaboration%5D%20">{{ site.email }}</a> with your target wavelength band, operating temperature, and any angular requirement.</p>
+</div>
