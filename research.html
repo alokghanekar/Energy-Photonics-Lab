@@ -4,14 +4,47 @@ title: Research
 permalink: /research.html
 description: Research areas of the Energy Photonics Lab, including thermal radiation, active metasurfaces, radiative cooling, near-field heat transfer, and energy harvesting.
 ---
+<style>
+  .research-card-img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 0.2rem;
+    margin-bottom: 0.9rem;
+    background: #000;
+  }
+  .selected-work {
+    margin: 1.1rem 0 0.3rem;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .paper-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: var(--fs-sm);
+  }
+  .paper-list li { margin-bottom: 0.4rem; }
+  .paper-list a { overflow-wrap: anywhere; }
+  .see-all-pubs { margin-top: 1.5rem; }
+</style>
+
 <h1 class="visually-hidden">Research</h1>
 <p class="page-lead">We study how nanostructure, material response, and symmetry can be used to control thermal radiation. Our work combines electromagnetic and thermal modeling, nanophotonic design, and experiments to connect fundamental light–matter interactions with energy and thermal technologies.</p>
 
 <div class="research-themes">
   <section class="research-card">
+    <img class="research-card-img" src="{{ '/assets/images/meta_chiral.png' | relative_url }}" alt="Chiral metasurface emitting a helical beam, illustrating symmetry-controlled thermal emission" width="1448" height="1086" loading="lazy" decoding="async">
     <h2>Symmetry-controlled thermal radiation</h2>
     <p>We investigate how mirror, rotational, and translational symmetries determine the spectrum, direction, and polarization of thermal emission. By deliberately breaking selected symmetries, we seek metasurfaces that produce directional, polarization-selective, chiral, and other unconventional emissive responses.</p>
     <p>Our approach combines full-wave simulation, modal analysis, and coupled-mode theory to connect changes in geometry with changes in radiative coupling and observable thermal emission.</p>
+    <p class="selected-work">Selected work</p>
+    <ul class="paper-list">
+      <li><a href="https://scholar.google.com/scholar?q=Electro-optic+symmetry+breaking+of+BIC+modes+for+tunable+infrared+emissivity">Electro-optic symmetry breaking of BIC modes for tunable infrared emissivity</a>. <em>Materials Today Physics</em>, 2023.</li>
+      <li><a href="https://doi.org/10.1364/OE.542179">Reversible symmetry breaking of BIC graphene plasmons for tunable mid-infrared absorption</a>. <em>Optics Express</em>, 2024.</li>
+      <li><a href="https://doi.org/10.1016/j.surfin.2024.104239">Active tuning of angular asymmetric thermal emission via carrier injection in metal-insulator-metal resonance gratings</a>. <em>Surfaces and Interfaces</em>, 2024.</li>
+    </ul>
   </section>
 
   <section class="research-card">
@@ -32,3 +65,5 @@ description: Research areas of the Energy Photonics Lab, including thermal radia
     <p>These projects connect fundamental thermal science with deployable technologies and provide accessible research opportunities for graduate, undergraduate, and high-school students.</p>
   </section>
 </div>
+
+<p class="see-all-pubs"><a href="{{ '/publications.html' | relative_url }}">See all publications &rarr;</a></p>
