@@ -7,60 +7,51 @@ description: The Energy Photonics Lab at UMBC studies active metasurfaces, infra
 <style>
   .home-intro { width: 100%; max-width: none; }
 
-  /* Two-column research sections: text on the left, figure on the right. */
-  .research-row {
+  /* Research areas: three cards in a single row. */
+  .home-areas {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-    gap: 2.5rem;
-    align-items: center;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0 2.5rem;
   }
-
-  .research-text { width: 100%; max-width: none; }
-
-  .research-fig { margin: 0; }
-
-  .research-fig-bic,
-  .research-fig-tpv,
-  .research-fig-hvac {
-    width: 75%;
-    max-width: none;
-    justify-self: center;
-  }
-
-  .research-fig-bic img,
-  .figure-zoom {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  /* The source PNG contains spectra on the left and the TPV schematic on the
-     right. Match the schematic panel's exact share of the source image and
-     anchor the image to the right, so the spectra are completely excluded. */
-  .tpv-schematic-only {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1.267 / 1;
-    overflow: hidden;
+  .area-card {
+    display: flex;
+    flex-direction: column;
+    color: inherit;
+    text-decoration: none;
     border: 1px solid var(--border);
-    background: var(--white);
+    border-top: 4px solid var(--umbc-gold);
+    border-radius: 0.3rem;
+    background: var(--surface);
+    overflow: hidden;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
   }
-
-  .tpv-schematic-only img {
-    position: absolute;
-    top: 0;
-    right: 0;
+  .area-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+  .area-img {
     display: block;
-    width: auto;
-    max-width: none;
-    height: 100%;
-    border: 0;
-    background: var(--white);
+    aspect-ratio: 3 / 2;
+    background: #000;
+    overflow: hidden;
   }
+  .area-img img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* The TPV source image has spectra on the left and the schematic on the
+     right; anchor to the right so only the schematic shows. */
+  .area-img-tpv { background: var(--white); }
+  .area-img-tpv img { object-position: right center; }
+  .area-body { padding: 0.9rem 1.1rem 1.2rem; }
+  .area-title { margin: 0 0 0.35rem; font-size: var(--fs-card); color: var(--navy); line-height: 1.3; }
+  .area-desc { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
 
-  /* Stack to a single column on narrow screens. */
   @media (max-width: 760px) {
-    .research-row { grid-template-columns: 1fr; gap: 1.25rem; }
+    .home-areas { grid-template-columns: 1fr; gap: 1.25rem; }
   }
 </style>
 
@@ -70,42 +61,31 @@ description: The Energy Photonics Lab at UMBC studies active metasurfaces, infra
   <p>We also work on classical thermal systems, including HVAC, thermal management, and building energy efficiency.</p>
 </div>
 
-<section class="research-row" aria-labelledby="research-area-one">
-  <div class="research-text">
-    <h2 id="research-area-one" class="section-heading">1. Nanophotonic control of infrared thermal radiation</h2>
-    <p>We study nanostructures and microstructures for manipulating light-matter interactions. We design metamaterials that violate common generalizations associated with thermal-radiation phenomena.</p>
-  </div>
-  <figure class="research-fig research-fig-bic">
-    <a class="figure-zoom" href="{{ '/assets/images/meta_chiral.png' | relative_url }}" aria-label="Open the metasurface thermal-emission figure at full resolution">
-      <img src="{{ '/assets/images/meta_chiral.png' | relative_url }}" alt="Rendering of a nanophotonic metasurface — a dense array of cylindrical nanopillars — emitting a helical, spiraling beam of light, representing chiral and directional control of thermal radiation" width="1448" height="1086" decoding="async">
-    </a>
-    <figcaption>Nanostructured metasurfaces steer the direction and polarization of infrared thermal emission, including chiral (twisted) emission.</figcaption>
-  </figure>
-</section>
+<div class="home-areas">
+  <a class="area-card" href="{{ '/research.html' | relative_url }}">
+    <span class="area-img"><img src="{{ '/assets/images/meta_chiral.png' | relative_url }}" alt="Rendering of a nanophotonic metasurface emitting a helical beam of light" width="1448" height="1086" loading="lazy" decoding="async"></span>
+    <span class="area-body">
+      <h2 class="area-title">Nanophotonic control of thermal radiation</h2>
+      <span class="area-desc">Metasurfaces and nanostructures that tune infrared thermal emission.</span>
+    </span>
+  </a>
 
-<section class="research-row" aria-labelledby="research-area-two">
-  <div class="research-text">
-    <h2 id="research-area-two" class="section-heading">2. Sustainable materials for energy harvesting and thermal management</h2>
-    <p>We study energy materials for thermophotovoltaic energy conversion through selective thermal emitters that could support energy harvesting and waste-heat recovery. We are also interested in dynamic radiative cooling and thermal regulation using phase-change media.</p>
-  </div>
-  <figure class="research-fig research-fig-tpv">
-    <div class="tpv-schematic-only" role="img" aria-label="Thermophotovoltaic system with a heat source, selective absorber, tungsten layer, thermal emitter, photovoltaic cell, and voltage output">
-      <img src="{{ '/assets/images/home-tpv-system.png' | relative_url }}?v=5" alt="" aria-hidden="true" width="1483" height="653" loading="lazy" decoding="async">
-    </div>
-    <figcaption>Thermophotovoltaic energy conversion using a spectrally selective absorber–emitter stack to deliver thermal radiation to a photovoltaic cell.</figcaption>
-  </figure>
-</section>
+  <a class="area-card" href="{{ '/research.html' | relative_url }}">
+    <span class="area-img area-img-tpv"><img src="{{ '/assets/images/home-tpv-system.png' | relative_url }}?v=5" alt="Thermophotovoltaic emitter and photovoltaic cell schematic" width="1483" height="653" loading="lazy" decoding="async"></span>
+    <span class="area-body">
+      <h2 class="area-title">Energy harvesting and thermal management</h2>
+      <span class="area-desc">Thermophotovoltaics, selective emitters, and radiative cooling.</span>
+    </span>
+  </a>
 
-<section class="research-row" aria-labelledby="research-area-three">
-  <div class="research-text">
-    <h2 id="research-area-three" class="section-heading">3. Classical thermal systems and energy efficiency</h2>
-    <p>We model and manage heat in engineered systems: HVAC and building energy, battery and electronics thermal management, and radiative and convective cooling. This work combines conjugate heat-transfer and CFD simulation with reduced-order thermal models and control strategies for energy-efficient operation.</p>
-  </div>
-  <figure class="research-fig research-fig-hvac">
-    <img src="{{ '/assets/images/hvac_1.png' | relative_url }}" alt="Cutaway illustration of a two-story house showing HVAC ducts, supply and return airflow, insulation, and an outdoor heat pump, with a snowy winter scene on one side and a sunny summer scene on the other" width="1672" height="941" loading="lazy" decoding="async">
-    <figcaption>Airflow and heat transfer through a building envelope, the basis for HVAC, thermal management, and building-energy modeling.</figcaption>
-  </figure>
-</section>
+  <a class="area-card" href="{{ '/research.html' | relative_url }}">
+    <span class="area-img"><img src="{{ '/assets/images/hvac_1.png' | relative_url }}" alt="Building cutaway showing HVAC airflow, insulation, and a heat pump" width="1672" height="941" loading="lazy" decoding="async"></span>
+    <span class="area-body">
+      <h2 class="area-title">Classical thermal systems and HVAC</h2>
+      <span class="area-desc">HVAC, thermal management, and building energy efficiency.</span>
+    </span>
+  </a>
+</div>
 
 <h2>Recent News</h2>
 <p><time datetime="2026-04-24">April 24, 2026</time>: <strong>Nahidul Islam Shadin</strong> successfully defended his <strong>MS thesis</strong>, “Reversible Symmetry Breaking of Tunable Directional Thermal Emission in VO<sub>2</sub>-SRO Gratings.” Congratulations, Nahidul.</p>
