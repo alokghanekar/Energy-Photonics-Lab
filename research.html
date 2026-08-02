@@ -9,10 +9,11 @@ description: Research areas of the Energy Photonics Lab, including thermal radia
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
-    object-fit: cover;
+    object-fit: contain;
+    background: var(--white);
+    border: 1px solid var(--border);
     border-radius: 0.2rem;
     margin-bottom: 0.9rem;
-    background: #000;
   }
   .selected-work {
     margin: 1.1rem 0 0.3rem;
@@ -47,6 +48,7 @@ description: Research areas of the Energy Photonics Lab, including thermal radia
   </section>
 
   <section class="research-card">
+    <img class="research-card-img" src="{{ '/assets/images/TOC.svg' | relative_url }}" alt="Graphical abstract for nonreciprocal thermal emission via spatiotemporal modulation of graphene" width="3078" height="1213" loading="lazy" decoding="async">
     <h2>Kirchhoff's law violation</h2>
     <p>Space-time modulation and other time-varying media that break reciprocity, enabling nonreciprocal thermal emission that violates Kirchhoff's law.</p>
     <p class="selected-work">Selected work</p>
@@ -57,6 +59,7 @@ description: Research areas of the Energy Photonics Lab, including thermal radia
   </section>
 
   <section class="research-card">
+    <img class="research-card-img" src="{{ '/assets/images/Tpvpaper.png' | relative_url }}" alt="Tungsten and silica nanoparticle thermophotovoltaic emitter schematic and its emissivity spectrum compared with tungsten and a GaSb photovoltaic cell" width="1762" height="912" loading="lazy" decoding="async">
     <h2>Thermophotovoltaics</h2>
     <p>Wavelength-selective emitters and absorbers matched to a photovoltaic cell for efficient conversion of heat to electricity.</p>
     <p class="selected-work">Selected work</p>
@@ -68,6 +71,7 @@ description: Research areas of the Energy Photonics Lab, including thermal radia
   </section>
 
   <section class="research-card">
+    <img class="research-card-img" src="{{ '/assets/images/TD1.png' | relative_url }}" alt="Four-panel schematic of a radiative thermal diode based on phase-change periodic nanostructures" width="277" height="168" loading="lazy" decoding="async">
     <h2>Thermal management and intelligent energy systems</h2>
     <p>Heat-transfer modeling and control for building energy, HVAC, and battery thermal management, from thermal diodes to reduced-order models.</p>
     <p class="selected-work">Selected work</p>
