@@ -15,9 +15,10 @@ description: Research areas of the Energy Photonics Lab, including thermal radia
     border-radius: 0.2rem;
     margin-bottom: 0.9rem;
   }
-  /* Wide figures (e.g. graphical abstracts) fill the frame and crop the
-     sides instead of leaving white bars. */
-  .research-card-img.cover { object-fit: cover; }
+  /* The Kirchhoff graphical abstract is very wide; give it a wider, shorter
+     frame and fill it, so it crops about 15% total (7.5% per side) with no
+     white bars. */
+  .research-card-img.toc { aspect-ratio: 2.16 / 1; object-fit: cover; }
   .selected-work {
     margin: 1.1rem 0 0.3rem;
     font-size: var(--fs-sm);
@@ -51,7 +52,7 @@ description: Research areas of the Energy Photonics Lab, including thermal radia
 
   <section class="research-card">
     <h2>Kirchhoff's law violation</h2>
-    <img class="research-card-img cover" src="{{ '/assets/images/TOC.svg' | relative_url }}" alt="Graphical abstract for nonreciprocal thermal emission via spatiotemporal modulation of graphene" width="3078" height="1213" loading="lazy" decoding="async">
+    <img class="research-card-img toc" src="{{ '/assets/images/TOC.svg' | relative_url }}" alt="Graphical abstract for nonreciprocal thermal emission via spatiotemporal modulation of graphene" width="3078" height="1213" loading="lazy" decoding="async">
     <p>Space-time modulation and other time-varying media that break reciprocity, enabling nonreciprocal thermal emission that violates Kirchhoff's law.</p>
     <p class="selected-work">Selected work</p>
     <ul class="paper-list">
