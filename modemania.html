@@ -1,0 +1,238 @@
+---
+layout: default
+title: ModeMania
+permalink: /modemania.html
+description: Interactive electromagnetic mode visualizations from the Energy Photonics Lab — explore how the modes of nanophotonic structures change with geometry and material.
+---
+<style>
+  :root {
+    --mm-panel: #ffffff;
+    --mm-ink: #2c2c2c;
+    --mm-muted: #596273;
+    --mm-metal: #b6bdca;
+    --mm-metal-line: #97a0af;
+    --mm-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+  .mm-card { margin: 1.6rem 0; padding: 1.4rem; border: 1px solid var(--border); border-top: 4px solid var(--umbc-gold); border-radius: 0.4rem; background: var(--surface); }
+  .mm-card > h2 { margin: 0 0 0.3rem; }
+  .mm-caption { margin: 0 0 1.1rem; color: var(--muted); font-size: 0.95rem; max-width: 62ch; }
+
+  .mm-stage { display: flex; gap: 0.8rem; align-items: stretch; justify-content: center; padding: 0.9rem; background: var(--mm-panel); border: 1px solid var(--border); border-radius: 0.3rem; }
+  .mm-canvas-wrap { flex: 1 1 auto; min-width: 0; max-width: 540px; }
+  .mm-stage canvas { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid var(--border); }
+  .mm-cbar { width: 48px; display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+  .mm-cbar .t { font-family: var(--mm-mono); font-size: 0.8rem; color: var(--mm-ink); font-style: italic; }
+  .mm-cbar .bar { flex: 1; width: 14px; border-radius: 4px; border: 1px solid var(--border); background: linear-gradient(to top, #0d0887, #7e03a8, #cc4778, #f89540, #f0f921); }
+  .mm-cbar .l { font-family: var(--mm-mono); font-size: 0.76rem; color: var(--muted); }
+
+  .mm-controls { display: flex; flex-wrap: wrap; gap: 1.05rem 1.6rem; align-items: flex-end; margin-top: 1.1rem; }
+  .mm-block { flex: 1 1 170px; min-width: 150px; }
+  .mm-block.mode { flex: 1 1 300px; }
+  .mm-block.read { flex: 1 1 180px; }
+  .mm-ch { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem; }
+  .mm-ch label { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+  .mm-val { font-family: var(--mm-mono); font-size: 0.84rem; color: var(--umbc-gold-dark); font-variant-numeric: tabular-nums; }
+  .mm-controls input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 4px; background: var(--border); outline: none; }
+  .mm-controls input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 17px; height: 17px; border-radius: 50%; background: var(--umbc-gold); border: 2px solid var(--mm-panel); box-shadow: 0 0 0 1px var(--mm-metal-line); cursor: pointer; }
+  .mm-controls input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; border-radius: 50%; background: var(--umbc-gold); border: 2px solid var(--mm-panel); box-shadow: 0 0 0 1px var(--mm-metal-line); cursor: pointer; }
+  .mm-controls input[type="range"]:focus-visible { box-shadow: 0 0 0 3px rgba(253,181,21,0.45); }
+  .mm-lab { display: block; font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+  .mm-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
+  .mm-seg button { font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--muted); background: transparent; border: 0; border-radius: 7px; padding: 0.5rem 0.2rem; cursor: pointer; }
+  .mm-seg button[aria-pressed="true"] { background: var(--mm-panel); color: var(--navy); box-shadow: 0 1px 2px rgba(20,28,45,0.12); }
+  .mm-seg button:focus-visible { outline: 2px solid var(--umbc-gold); outline-offset: 1px; }
+  .mm-read .r { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.85rem; gap: 1rem; margin-bottom: 0.3rem; }
+  .mm-read .k { color: var(--muted); }
+  .mm-read .v { font-family: var(--mm-mono); font-variant-numeric: tabular-nums; color: var(--text); }
+</style>
+
+<h1 class="visually-hidden">ModeMania</h1>
+<p class="page-lead">Interactive visualizations of electromagnetic modes. Each card solves the fields live in your browser, so you can see how a structure's modes change with its geometry and materials.</p>
+
+<section class="mm-card">
+  <h2 class="section-heading">Guided modes</h2>
+  <p class="mm-caption">A dielectric ridge (index <em>n</em>) on a perfect electric conductor. The colour map is the out-of-plane field E<sub>z</sub> of the selected mode, found from a live 2D eigenmode solve. Change the width, height, index, and mode order and watch the pattern, ordering, and resonant wavelength respond.</p>
+
+  <div class="mm-widget">
+    <div class="mm-stage">
+      <div class="mm-canvas-wrap">
+        <canvas id="mmField" width="600" height="533" role="img" aria-label="Colour map of the out-of-plane electric field of the selected guided mode"></canvas>
+      </div>
+      <div class="mm-cbar" aria-hidden="true">
+        <span class="t">E<sub>z</sub></span>
+        <span class="l">+</span><div class="bar"></div><span class="l">−</span>
+      </div>
+    </div>
+
+    <div class="mm-controls">
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mmW">Width&nbsp;<em>w</em></label><span class="mm-val" id="mmWVal">1.20 µm</span></div>
+        <input type="range" id="mmW" min="0.3" max="2.6" step="0.02" value="1.2">
+      </div>
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mmH">Height&nbsp;<em>h</em></label><span class="mm-val" id="mmHVal">0.90 µm</span></div>
+        <input type="range" id="mmH" min="0.3" max="2.4" step="0.02" value="0.9">
+      </div>
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mmN">Index&nbsp;<em>n</em></label><span class="mm-val" id="mmNVal">3.00</span></div>
+        <input type="range" id="mmN" min="1.5" max="4" step="0.05" value="3">
+      </div>
+      <div class="mm-block mode">
+        <span class="mm-lab">Mode</span>
+        <div class="mm-seg" role="group" aria-label="Mode order">
+          <button id="mmM0" aria-pressed="true">Fundamental</button>
+          <button id="mmM1" aria-pressed="false">First-order</button>
+          <button id="mmM2" aria-pressed="false">Second-order</button>
+        </div>
+      </div>
+      <div class="mm-block read mm-read" aria-live="polite">
+        <div class="r"><span class="k">λ₀</span><span class="v" id="mmLam0">—</span></div>
+        <div class="r"><span class="k">Field in ridge</span><span class="v" id="mmConf">—</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  "use strict";
+  function makeSolver(Nx, Ny, hh) {
+    var Mx = Nx - 1, My = Ny - 1, N = Mx * My, k, i, j, l;
+    var Sx = []; for (k = 1; k <= Mx; k++) { var r = new Float64Array(Mx + 1); for (i = 1; i <= Mx; i++) r[i] = Math.sin(Math.PI * k * i / Nx); Sx.push(r); }
+    var Sy = []; for (l = 1; l <= My; l++) { var r2 = new Float64Array(My + 1); for (j = 1; j <= My; j++) r2[j] = Math.sin(Math.PI * l * j / Ny); Sy.push(r2); }
+    var mux = new Float64Array(Mx + 1); for (k = 1; k <= Mx; k++) mux[k] = (4 / (hh * hh)) * Math.pow(Math.sin(Math.PI * k / (2 * Nx)), 2);
+    var muy = new Float64Array(My + 1); for (l = 1; l <= My; l++) muy[l] = (4 / (hh * hh)) * Math.pow(Math.sin(Math.PI * l / (2 * Ny)), 2);
+    var id = function (i, j) { return (j - 1) * Mx + (i - 1); };
+    function solvePoisson(b) {
+      var tmp = new Float64Array(Mx * My), i, j, k, l, s;
+      for (j = 1; j <= My; j++) for (k = 1; k <= Mx; k++) { s = 0; var Sxk = Sx[k - 1]; for (i = 1; i <= Mx; i++) s += b[id(i, j)] * Sxk[i]; tmp[(k - 1) + (j - 1) * Mx] = s; }
+      var Bhat = new Float64Array(Mx * My);
+      for (k = 1; k <= Mx; k++) for (l = 1; l <= My; l++) { s = 0; var Syl = Sy[l - 1]; for (j = 1; j <= My; j++) s += tmp[(k - 1) + (j - 1) * Mx] * Syl[j]; Bhat[(k - 1) + (l - 1) * Mx] = s / (mux[k] + muy[l]); }
+      var t2 = new Float64Array(Mx * My), cx = 2 / Nx, cy = 2 / Ny;
+      for (l = 1; l <= My; l++) for (i = 1; i <= Mx; i++) { s = 0; for (k = 1; k <= Mx; k++) s += Bhat[(k - 1) + (l - 1) * Mx] * Sx[k - 1][i]; t2[(i - 1) + (l - 1) * Mx] = s * cx; }
+      var x = new Float64Array(N);
+      for (i = 1; i <= Mx; i++) for (j = 1; j <= My; j++) { s = 0; for (l = 1; l <= My; l++) s += t2[(i - 1) + (l - 1) * Mx] * Sy[l - 1][j]; x[id(i, j)] = s * cy; }
+      return x;
+    }
+    function applyA(u) {
+      var r = new Float64Array(N), i, j, c, v, inv = 1 / (hh * hh);
+      for (j = 1; j <= My; j++) for (i = 1; i <= Mx; i++) { c = id(i, j); v = 4 * u[c]; if (i > 1) v -= u[id(i - 1, j)]; if (i < Mx) v -= u[id(i + 1, j)]; if (j > 1) v -= u[id(i, j - 1)]; if (j < My) v -= u[id(i, j + 1)]; r[c] = v * inv; }
+      return r;
+    }
+    return { Mx: Mx, My: My, N: N, id: id, solvePoisson: solvePoisson, applyA: applyA };
+  }
+  function jacobiEig(Ain, p) {
+    var A = [], V = [], a, b;
+    for (a = 0; a < p; a++) A.push(Ain[a].slice());
+    for (b = 0; b < p; b++) { var rr = new Float64Array(p); rr[b] = 1; V.push(rr); }
+    for (var sweep = 0; sweep < 100; sweep++) {
+      var off = 0, q, w; for (q = 0; q < p; q++) for (w = q + 1; w < p; w++) off += A[q][w] * A[q][w];
+      if (off < 1e-20) break;
+      for (var i = 0; i < p; i++) for (var j = i + 1; j < p; j++) {
+        if (Math.abs(A[i][j]) < 1e-18) continue;
+        var th = (A[j][j] - A[i][i]) / (2 * A[i][j]);
+        var t = (th === 0) ? 1 : Math.sign(th) / (Math.abs(th) + Math.sqrt(th * th + 1));
+        var c = 1 / Math.sqrt(t * t + 1), s = t * c, kk, k2;
+        for (kk = 0; kk < p; kk++) { var aik = A[i][kk], ajk = A[j][kk]; A[i][kk] = c * aik - s * ajk; A[j][kk] = s * aik + c * ajk; }
+        for (k2 = 0; k2 < p; k2++) { var aki = A[k2][i], akj = A[k2][j]; A[k2][i] = c * aki - s * akj; A[k2][j] = s * aki + c * akj; var vki = V[k2][i], vkj = V[k2][j]; V[k2][i] = c * vki - s * vkj; V[k2][j] = s * vki + c * vkj; }
+      }
+    }
+    var val = [], d; for (d = 0; d < p; d++) val.push(A[d][d]);
+    var idx = val.map(function (v, ii) { return ii; }).sort(function (x, y) { return val[x] - val[y]; });
+    return { val: idx.map(function (ii) { return val[ii]; }), order: idx, V: V };
+  }
+  function solveModes(params, grid, p, iters) {
+    var n = params.n, w = params.w, h = params.h, Mx = grid.Mx, My = grid.My, N = grid.N, id = grid.id;
+    var eps = new Float64Array(N), xmin = params.xmin, hh = params.hh, i, j, t;
+    for (j = 1; j <= My; j++) for (i = 1; i <= Mx; i++) { var x = xmin + i * hh, y = j * hh; eps[id(i, j)] = (Math.abs(x) <= w / 2 && y <= h) ? n * n : 1.0; }
+    var dot = function (u, v) { var s = 0, tt; for (tt = 0; tt < N; tt++) s += u[tt] * v[tt]; return s; };
+    var bdot = function (u, v) { var s = 0, tt; for (tt = 0; tt < N; tt++) s += eps[tt] * u[tt] * v[tt]; return s; };
+    var X = [], seed = 12345;
+    function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff - 0.5; }
+    for (var c = 0; c < p; c++) { var v0 = new Float64Array(N); for (t = 0; t < N; t++) v0[t] = rnd(); X.push(v0); }
+    var res = null;
+    for (var it = 0; it < iters; it++) {
+      var Y = [], cc;
+      for (cc = 0; cc < p; cc++) { var rhs = new Float64Array(N); for (t = 0; t < N; t++) rhs[t] = eps[t] * X[cc][t]; Y.push(grid.solvePoisson(rhs)); }
+      for (var a = 0; a < p; a++) {
+        for (var b = 0; b < a; b++) { var pr = bdot(Y[a], Y[b]); for (t = 0; t < N; t++) Y[a][t] -= pr * Y[b][t]; }
+        var nrm = Math.sqrt(bdot(Y[a], Y[a])); for (t = 0; t < N; t++) Y[a][t] /= nrm;
+      }
+      var AY = Y.map(function (y) { return grid.applyA(y); });
+      var Abar = []; for (var r1 = 0; r1 < p; r1++) Abar.push(new Array(p));
+      for (var r = 0; r < p; r++) for (var s2 = r; s2 < p; s2++) { var vv = dot(AY[r], Y[s2]); Abar[r][s2] = vv; Abar[s2][r] = vv; }
+      var eg = jacobiEig(Abar, p), newX = [], m;
+      for (m = 0; m < p; m++) { var col = eg.order[m], vec = new Float64Array(N), qq; for (qq = 0; qq < p; qq++) { var cq = eg.V[qq][col]; for (t = 0; t < N; t++) vec[t] += cq * Y[qq][t]; } newX.push(vec); }
+      X = newX; res = eg.val;
+    }
+    return { theta: res, vecs: X, eps: eps };
+  }
+
+  var PLASMA = [[0,[13,8,135]],[.25,[126,3,168]],[.5,[204,71,120]],[.75,[248,149,64]],[1,[240,249,33]]];
+  function sampleMap(stops, tt) {
+    if (tt <= stops[0][0]) return stops[0][1];
+    for (var i = 1; i < stops.length; i++) if (tt <= stops[i][0]) { var a = stops[i - 1], b = stops[i], s = (tt - a[0]) / (b[0] - a[0]); return [(a[1][0]+(b[1][0]-a[1][0])*s)|0,(a[1][1]+(b[1][1]-a[1][1])*s)|0,(a[1][2]+(b[1][2]-a[1][2])*s)|0]; }
+    return stops[stops.length - 1][1];
+  }
+  function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function hexToRgb(hx) { hx = hx.replace('#',''); if (hx.length===3) hx=hx[0]+hx[0]+hx[1]+hx[1]+hx[2]+hx[2]; return [parseInt(hx.slice(0,2),16),parseInt(hx.slice(2,4),16),parseInt(hx.slice(4,6),16)]; }
+
+  var Lx = 4.0, Ly = 3.2, Nx = 64, hh = Lx / Nx, Ny = Math.round(Ly / hh); Ly = Ny * hh;
+  var grid = makeSolver(Nx, Ny, hh), xmin = -Lx / 2, METAL = 0.35, solveP = 6, solveIters = 18;
+  var state = { n: 3, w: 1.2, h: 0.9, order: 0 };
+
+  var cvs = document.getElementById("mmField"), ctx = cvs.getContext("2d");
+  var offc = document.createElement("canvas"); offc.width = grid.Mx; offc.height = grid.My;
+  var octx = offc.getContext("2d");
+  var scale = 600 / Lx; cvs.width = 600; cvs.height = Math.round((Ly + METAL) * scale);
+
+  function render() {
+    var out = solveModes({ n: state.n, w: state.w, h: state.h, xmin: xmin, hh: hh }, grid, solveP, solveIters);
+    var vec = out.vecs[state.order], eps = out.eps, theta = out.theta[state.order];
+    var Mx = grid.Mx, My = grid.My, id = grid.id;
+    var maxa = 1e-12, t, inD = 0, tot = 0;
+    for (t = 0; t < vec.length; t++) { var av = Math.abs(vec[t]); if (av > maxa) maxa = av; var e = vec[t]*vec[t]; tot += e; if (eps[t] > 1.0001) inD += e; }
+    var im = octx.createImageData(Mx, My), d = im.data;
+    for (var j = 1; j <= My; j++) for (var i = 1; i <= Mx; i++) {
+      var val = vec[id(i, j)] / maxa, tt = 0.5 * (val + 1); if (tt < 0) tt = 0; else if (tt > 1) tt = 1;
+      var c = sampleMap(PLASMA, tt), row = My - j, col = i - 1, k = (row * Mx + col) * 4;
+      d[k] = c[0]; d[k+1] = c[1]; d[k+2] = c[2]; d[k+3] = 255;
+    }
+    octx.putImageData(im, 0, 0);
+    var W = cvs.width, H = cvs.height, pecY = Ly * scale;
+    var panel = hexToRgb(cssVar('--mm-panel') || '#ffffff');
+    ctx.fillStyle = 'rgb(' + panel.join(',') + ')'; ctx.fillRect(0, 0, W, H);
+    ctx.imageSmoothingEnabled = true; ctx.drawImage(offc, 0, 0, Mx, My, 0, 0, W, pecY);
+    ctx.fillStyle = cssVar('--mm-metal') || '#b6bdca'; ctx.fillRect(0, pecY, W, H - pecY);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, pecY, W, H - pecY); ctx.clip();
+    ctx.strokeStyle = cssVar('--mm-metal-line') || '#97a0af'; ctx.lineWidth = 1; ctx.beginPath();
+    for (var hx = -(H - pecY); hx < W; hx += 9) { ctx.moveTo(hx, H); ctx.lineTo(hx + (H - pecY), pecY); }
+    ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = cssVar('--mm-metal-line') || '#97a0af'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, pecY); ctx.lineTo(W, pecY); ctx.stroke();
+    var rx = (-state.w / 2 - xmin) * scale, rw = state.w * scale, ry = (Ly - state.h) * scale, rh = state.h * scale;
+    ctx.setLineDash([5, 4]); ctx.globalAlpha = 0.65; ctx.lineWidth = 1.25;
+    ctx.strokeStyle = cssVar('--mm-ink') || '#2c2c2c'; ctx.strokeRect(rx, ry, rw, rh);
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+    ctx.fillStyle = cssVar('--mm-muted') || '#596273'; ctx.font = '600 12px ' + (cssVar('--mm-mono') || 'monospace');
+    ctx.fillText('PEC', 8, Math.min(H - 6, pecY + 16));
+    document.getElementById('mmLam0').textContent = (2 * Math.PI / Math.sqrt(theta)).toFixed(3) + ' µm';
+    document.getElementById('mmConf').textContent = (100 * inD / tot).toFixed(0) + ' %';
+  }
+
+  function bindSlider(idn, key, fmt) {
+    var el = document.getElementById(idn), o = document.getElementById(idn + 'Val');
+    el.addEventListener('input', function () { state[key] = parseFloat(el.value); o.textContent = fmt(state[key]); schedule(); });
+  }
+  bindSlider('mmW', 'w', function (v) { return v.toFixed(2) + ' µm'; });
+  bindSlider('mmH', 'h', function (v) { return v.toFixed(2) + ' µm'; });
+  bindSlider('mmN', 'n', function (v) { return v.toFixed(2); });
+  var mbtn = [document.getElementById('mmM0'), document.getElementById('mmM1'), document.getElementById('mmM2')];
+  function setOrder(o) { state.order = o; for (var i = 0; i < 3; i++) mbtn[i].setAttribute('aria-pressed', i === o ? 'true' : 'false'); schedule(); }
+  mbtn.forEach(function (b, i) { b.addEventListener('click', function () { setOrder(i); }); });
+
+  var raf = null;
+  function schedule() { if (raf) return; raf = requestAnimationFrame(function () { raf = null; render(); }); }
+  render();
+})();
+</script>
