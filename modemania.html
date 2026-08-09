@@ -93,6 +93,48 @@ description: Interactive electromagnetic mode visualizations from the Energy Pho
   </div>
 </section>
 
+<section class="mm-card">
+  <h2 class="section-heading">Magnetic polarization</h2>
+  <p class="mm-caption">The same dielectric ridge on a conductor, now capped by a thin PEC layer (10% of the height). Here the out-of-plane field is H<sub>z</sub> (TE, or magnetic, polarization), which meets a Neumann condition at every metal surface rather than vanishing there. Shown are the cavity modes trapped under the cap.</p>
+  <div class="mm-widget">
+    <div class="mm-stage">
+      <div class="mm-canvas-wrap">
+        <canvas id="mm2Field" width="600" height="533" role="img" aria-label="Colour map of the out-of-plane magnetic field of the selected mode"></canvas>
+      </div>
+      <div class="mm-cbar" aria-hidden="true">
+        <span class="t">H<sub>z</sub></span>
+        <span class="l">+</span><div class="bar"></div><span class="l">−</span>
+      </div>
+    </div>
+    <div class="mm-controls">
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mm2W">Width&nbsp;<em>w</em></label><span class="mm-val" id="mm2WVal">1.20 µm</span></div>
+        <input type="range" id="mm2W" min="0.4" max="2.4" step="0.02" value="1.2">
+      </div>
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mm2H">Height&nbsp;<em>h</em></label><span class="mm-val" id="mm2HVal">0.90 µm</span></div>
+        <input type="range" id="mm2H" min="0.4" max="2.0" step="0.02" value="0.9">
+      </div>
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mm2N">Index&nbsp;<em>n</em></label><span class="mm-val" id="mm2NVal">3.00</span></div>
+        <input type="range" id="mm2N" min="1.5" max="4" step="0.05" value="3">
+      </div>
+      <div class="mm-block mode">
+        <span class="mm-lab">Mode</span>
+        <div class="mm-seg" role="group" aria-label="Mode order">
+          <button id="mm2M0" aria-pressed="true">Fundamental</button>
+          <button id="mm2M1" aria-pressed="false">First-order</button>
+          <button id="mm2M2" aria-pressed="false">Second-order</button>
+        </div>
+      </div>
+      <div class="mm-block read mm-read" aria-live="polite">
+        <div class="r"><span class="k">λ₀</span><span class="v" id="mm2Lam0">—</span></div>
+        <div class="r"><span class="k">Under cap</span><span class="v" id="mm2Conf">—</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <script>
 (function () {
   "use strict";
@@ -231,6 +273,164 @@ description: Interactive electromagnetic mode visualizations from the Energy Pho
   function setOrder(o) { state.order = o; for (var i = 0; i < 3; i++) mbtn[i].setAttribute('aria-pressed', i === o ? 'true' : 'false'); schedule(); }
   mbtn.forEach(function (b, i) { b.addEventListener('click', function () { setOrder(i); }); });
 
+  var raf = null;
+  function schedule() { if (raf) return; raf = requestAnimationFrame(function () { raf = null; render(); }); }
+  render();
+})();
+</script>
+
+<script>
+/* Card 2 — Magnetic polarization (Hz), capped ridge. Verified solver: eig_hz.js */
+(function () {
+  "use strict";
+  function makeHz(Nx, Ny, hh) { var NxP = Nx + 1, NyP = Ny + 1; return { NxP: NxP, NyP: NyP, id: function (i, j) { return j * NxP + i; }, hh: hh, Nx: Nx, Ny: Ny }; }
+  function buildGeom(p, g) {
+    var NxP = g.NxP, NyP = g.NyP, hh = g.hh, id = g.id, xmin = p.xmin, w = p.w, h = p.h, n = p.n, cap = p.cap, Ntot = NxP * NyP;
+    var metal = new Uint8Array(Ntot), inv = new Float64Array(Ntot), i, j;
+    for (j = 0; j < NyP; j++) for (i = 0; i < NxP; i++) {
+      var x = xmin + i * hh, y = j * hh, k = id(i, j);
+      if (Math.abs(x) <= w / 2 && y > h && y <= h + cap) { metal[k] = 1; inv[k] = 0; continue; }
+      inv[k] = (Math.abs(x) <= w / 2 && y <= h) ? 1 / (n * n) : 1.0;
+    }
+    var dom = [], dofOf = new Int32Array(Ntot).fill(-1), t;
+    for (t = 0; t < Ntot; t++) if (!metal[t]) { dofOf[t] = dom.length; dom.push(t); }
+    return { metal: metal, inv: inv, dom: dom, dofOf: dofOf, N: dom.length };
+  }
+  function makeApply(g, geom) {
+    var NxP = g.NxP, NyP = g.NyP, hh2 = g.hh * g.hh, inv = geom.inv, metal = geom.metal, dom = geom.dom, dofOf = geom.dofOf, N = geom.N;
+    return function (u, out) {
+      var d, k, i, j, acc, a;
+      for (d = 0; d < N; d++) {
+        k = dom[d]; i = k % NxP; j = (k / NxP) | 0; acc = 0;
+        if (i + 1 < NxP && !metal[k + 1]) { a = 0.5 * (inv[k] + inv[k + 1]); acc += a * (u[d] - u[dofOf[k + 1]]); }
+        if (i - 1 >= 0 && !metal[k - 1]) { a = 0.5 * (inv[k] + inv[k - 1]); acc += a * (u[d] - u[dofOf[k - 1]]); }
+        if (j + 1 < NyP && !metal[k + NxP]) { a = 0.5 * (inv[k] + inv[k + NxP]); acc += a * (u[d] - u[dofOf[k + NxP]]); }
+        if (j - 1 >= 0 && !metal[k - NxP]) { a = 0.5 * (inv[k] + inv[k - NxP]); acc += a * (u[d] - u[dofOf[k - NxP]]); }
+        out[d] = acc / hh2;
+      }
+    };
+  }
+  function meanZero(v, N) { var s = 0, t; for (t = 0; t < N; t++) s += v[t]; s /= N; for (t = 0; t < N; t++) v[t] -= s; }
+  function dot(a, b, N) { var s = 0, t; for (t = 0; t < N; t++) s += a[t] * b[t]; return s; }
+  function cg(applyA, b, N, tol, maxit) {
+    var x = new Float64Array(N), r = new Float64Array(N), pv = new Float64Array(N), Ap = new Float64Array(N), t;
+    meanZero(b, N); for (t = 0; t < N; t++) { r[t] = b[t]; pv[t] = b[t]; }
+    var rs = dot(r, r, N), rs0 = rs, it;
+    for (it = 0; it < maxit; it++) {
+      applyA(pv, Ap); meanZero(Ap, N);
+      var al = rs / (dot(pv, Ap, N) + 1e-300);
+      for (t = 0; t < N; t++) { x[t] += al * pv[t]; r[t] -= al * Ap[t]; }
+      var rs1 = dot(r, r, N); if (rs1 < tol * tol * rs0) break;
+      var be = rs1 / rs; for (t = 0; t < N; t++) pv[t] = r[t] + be * pv[t]; rs = rs1;
+    }
+    meanZero(x, N); return x;
+  }
+  function jacobiEig(Ain, p) {
+    var A = [], V = [], a, b;
+    for (a = 0; a < p; a++) A.push(Ain[a].slice());
+    for (b = 0; b < p; b++) { var rr = new Float64Array(p); rr[b] = 1; V.push(rr); }
+    for (var sweep = 0; sweep < 100; sweep++) {
+      var off = 0, q, w; for (q = 0; q < p; q++) for (w = q + 1; w < p; w++) off += A[q][w] * A[q][w]; if (off < 1e-22) break;
+      for (var i = 0; i < p; i++) for (var j = i + 1; j < p; j++) {
+        if (Math.abs(A[i][j]) < 1e-20) continue;
+        var th = (A[j][j] - A[i][i]) / (2 * A[i][j]);
+        var t = (th === 0) ? 1 : Math.sign(th) / (Math.abs(th) + Math.sqrt(th * th + 1));
+        var c = 1 / Math.sqrt(t * t + 1), s = t * c, kk, k2;
+        for (kk = 0; kk < p; kk++) { var aik = A[i][kk], ajk = A[j][kk]; A[i][kk] = c * aik - s * ajk; A[j][kk] = s * aik + c * ajk; }
+        for (k2 = 0; k2 < p; k2++) { var aki = A[k2][i], akj = A[k2][j]; A[k2][i] = c * aki - s * akj; A[k2][j] = s * aki + c * akj; var vki = V[k2][i], vkj = V[k2][j]; V[k2][i] = c * vki - s * vkj; V[k2][j] = s * vki + c * vkj; }
+      }
+    }
+    var val = [], d; for (d = 0; d < p; d++) val.push(A[d][d]);
+    var idx = val.map(function (v, ii) { return ii; }).sort(function (x, y) { return val[x] - val[y]; });
+    return { val: idx.map(function (ii) { return val[ii]; }), order: idx, V: V };
+  }
+  function solveHz(g, geom, p, iters) {
+    var N = geom.N, applyA = makeApply(g, geom), t, X = [], seed = 999;
+    function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff - 0.5; }
+    for (var c = 0; c < p; c++) { var v = new Float64Array(N); for (t = 0; t < N; t++) v[t] = rnd(); meanZero(v, N); X.push(v); }
+    var res = null;
+    for (var it = 0; it < iters; it++) {
+      var Y = [], cc; for (cc = 0; cc < p; cc++) { var y = cg(applyA, X[cc].slice(), N, 1e-7, 2000); meanZero(y, N); Y.push(y); }
+      for (var a = 0; a < p; a++) { for (var b = 0; b < a; b++) { var pr = dot(Y[a], Y[b], N); for (t = 0; t < N; t++) Y[a][t] -= pr * Y[b][t]; } var nrm = Math.sqrt(dot(Y[a], Y[a], N)); for (t = 0; t < N; t++) Y[a][t] /= nrm; }
+      var AY = Y.map(function (y) { var o = new Float64Array(N); applyA(y, o); return o; });
+      var Abar = []; for (var r1 = 0; r1 < p; r1++) Abar.push(new Array(p));
+      for (var r = 0; r < p; r++) for (var s2 = r; s2 < p; s2++) { var vv = dot(AY[r], Y[s2], N); Abar[r][s2] = vv; Abar[s2][r] = vv; }
+      var eg = jacobiEig(Abar, p), newX = [], m;
+      for (m = 0; m < p; m++) { var col = eg.order[m], vec = new Float64Array(N), qq; for (qq = 0; qq < p; qq++) { var cq = eg.V[qq][col]; for (t = 0; t < N; t++) vec[t] += cq * Y[qq][t]; } newX.push(vec); }
+      X = newX; res = eg.val;
+    }
+    return { theta: res, vecs: X };
+  }
+
+  var PLASMA = [[0,[13,8,135]],[.25,[126,3,168]],[.5,[204,71,120]],[.75,[248,149,64]],[1,[240,249,33]]];
+  function sampleMap(stops, tt) { if (tt <= stops[0][0]) return stops[0][1]; for (var i = 1; i < stops.length; i++) if (tt <= stops[i][0]) { var a = stops[i - 1], b = stops[i], s = (tt - a[0]) / (b[0] - a[0]); return [(a[1][0]+(b[1][0]-a[1][0])*s)|0,(a[1][1]+(b[1][1]-a[1][1])*s)|0,(a[1][2]+(b[1][2]-a[1][2])*s)|0]; } return stops[stops.length - 1][1]; }
+  function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function hexToRgb(hx) { hx = hx.replace('#',''); if (hx.length===3) hx=hx[0]+hx[0]+hx[1]+hx[1]+hx[2]+hx[2]; return [parseInt(hx.slice(0,2),16),parseInt(hx.slice(2,4),16),parseInt(hx.slice(4,6),16)]; }
+
+  var Lx = 4.0, Ly = 3.2, Nx = 60, hh = Lx / Nx, Ny = Math.round(Ly / hh); Ly = Ny * hh;
+  var g = makeHz(Nx, Ny, hh), xmin = -Lx / 2, METAL = 0.35;
+  var st = { n: 3, w: 1.2, h: 0.9, order: 0 };
+  var cvs = document.getElementById("mm2Field"), ctx = cvs.getContext("2d");
+  var offc = document.createElement("canvas"); offc.width = g.NxP; offc.height = g.NyP;
+  var octx = offc.getContext("2d");
+  var scale = 600 / Lx; cvs.width = 600; cvs.height = Math.round((Ly + METAL) * scale);
+
+  function render() {
+    var pr = { xmin: xmin, w: st.w, h: st.h, n: st.n, cap: 0.1 * st.h };
+    var geom = buildGeom(pr, g), r = solveHz(g, geom, 10, 16);
+    var NxP = g.NxP, NyP = g.NyP, dom = geom.dom, dofOf = geom.dofOf, metal = geom.metal, N = geom.N, d, k, i, j;
+    function underCap(vec) { var ic = 0, tot = 0, dd; for (dd = 0; dd < N; dd++) { k = dom[dd]; i = k % NxP; j = (k / NxP) | 0; var x = xmin + i * hh, y = j * hh, e = vec[dd] * vec[dd]; tot += e; if (Math.abs(x) <= pr.w / 2 && y <= pr.h) ic += e; } return ic / tot; }
+    var arr = [], mi; for (mi = 0; mi < r.theta.length; mi++) arr.push({ th: r.theta[mi], vec: r.vecs[mi], uc: underCap(r.vecs[mi]) });
+    var conf = arr.filter(function (a) { return a.uc > 0.35 && a.th > 1e-4; }).sort(function (a, b) { return a.th - b.th; });
+
+    var W = cvs.width, H = cvs.height, pecY = Ly * scale;
+    var panel = hexToRgb(cssVar('--mm-panel') || '#ffffff'), metalC = cssVar('--mm-metal') || '#b6bdca', metalRgb = hexToRgb(metalC);
+
+    if (conf.length <= st.order) {
+      ctx.fillStyle = 'rgb(' + panel.join(',') + ')'; ctx.fillRect(0, 0, W, H);
+      document.getElementById('mm2Lam0').textContent = '—'; document.getElementById('mm2Conf').textContent = 'no mode';
+    } else {
+      var sel = conf[st.order], vec = sel.vec, maxa = 1e-12;
+      for (d = 0; d < N; d++) { var av = Math.abs(vec[d]); if (av > maxa) maxa = av; }
+      var im = octx.createImageData(NxP, NyP), im8 = im.data;
+      for (j = 0; j < NyP; j++) for (i = 0; i < NxP; i++) {
+        k = j * NxP + i; var row = NyP - 1 - j, idx = (row * NxP + i) * 4, c;
+        if (metal[k]) c = metalRgb; else { var val = vec[dofOf[k]] / maxa, tt = 0.5 * (val + 1); if (tt < 0) tt = 0; else if (tt > 1) tt = 1; c = sampleMap(PLASMA, tt); }
+        im8[idx] = c[0]; im8[idx + 1] = c[1]; im8[idx + 2] = c[2]; im8[idx + 3] = 255;
+      }
+      octx.putImageData(im, 0, 0);
+      ctx.imageSmoothingEnabled = true; ctx.drawImage(offc, 0, 0, NxP, NyP, 0, 0, W, pecY);
+      document.getElementById('mm2Lam0').textContent = (2 * Math.PI / Math.sqrt(sel.th)).toFixed(3) + ' µm';
+      document.getElementById('mm2Conf').textContent = (sel.uc * 100).toFixed(0) + ' %';
+    }
+
+    // substrate strip
+    ctx.fillStyle = metalC; ctx.fillRect(0, pecY, W, H - pecY);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, pecY, W, H - pecY); ctx.clip();
+    ctx.strokeStyle = cssVar('--mm-metal-line') || '#97a0af'; ctx.lineWidth = 1; ctx.beginPath();
+    for (var hx = -(H - pecY); hx < W; hx += 9) { ctx.moveTo(hx, H); ctx.lineTo(hx + (H - pecY), pecY); }
+    ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = cssVar('--mm-metal-line') || '#97a0af'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(0, pecY); ctx.lineTo(W, pecY); ctx.stroke();
+
+    // ridge + cap outlines
+    var tX = function (x) { return (x - xmin) * scale; }, tY = function (y) { return (Ly - y) * scale; };
+    ctx.setLineDash([5, 4]); ctx.globalAlpha = 0.65; ctx.lineWidth = 1.25; ctx.strokeStyle = cssVar('--mm-ink') || '#2c2c2c';
+    ctx.strokeRect(tX(-st.w / 2), tY(st.h), st.w * scale, st.h * scale);
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+    ctx.lineWidth = 1.5; ctx.strokeStyle = cssVar('--mm-metal-line') || '#97a0af';
+    ctx.strokeRect(tX(-st.w / 2), tY(st.h + 0.1 * st.h), st.w * scale, 0.1 * st.h * scale);
+
+    ctx.fillStyle = cssVar('--mm-muted') || '#596273'; ctx.font = '600 12px ' + (cssVar('--mm-mono') || 'monospace');
+    ctx.fillText('PEC', 8, Math.min(H - 6, pecY + 16));
+  }
+
+  function bindSlider(idn, key, fmt) { var el = document.getElementById(idn), o = document.getElementById(idn + 'Val'); el.addEventListener('input', function () { st[key] = parseFloat(el.value); o.textContent = fmt(st[key]); schedule(); }); }
+  bindSlider('mm2W', 'w', function (v) { return v.toFixed(2) + ' µm'; });
+  bindSlider('mm2H', 'h', function (v) { return v.toFixed(2) + ' µm'; });
+  bindSlider('mm2N', 'n', function (v) { return v.toFixed(2); });
+  var mb = [document.getElementById('mm2M0'), document.getElementById('mm2M1'), document.getElementById('mm2M2')];
+  function setOrder(o) { st.order = o; for (var i = 0; i < 3; i++) mb[i].setAttribute('aria-pressed', i === o ? 'true' : 'false'); schedule(); }
+  mb.forEach(function (b, i) { b.addEventListener('click', function () { setOrder(i); }); });
   var raf = null;
   function schedule() { if (raf) return; raf = requestAnimationFrame(function () { raf = null; render(); }); }
   render();
