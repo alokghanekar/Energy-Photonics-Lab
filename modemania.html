@@ -38,6 +38,7 @@ description: Interactive electromagnetic mode visualizations from the Energy Pho
   .mm-controls input[type="range"]:focus-visible { box-shadow: 0 0 0 3px rgba(253,181,21,0.45); }
   .mm-lab { display: block; font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
   .mm-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
+  .mm-seg.mm-seg-2 { grid-template-columns: repeat(2, 1fr); }
   .mm-seg button { font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--muted); background: transparent; border: 0; border-radius: 7px; padding: 0.5rem 0.2rem; cursor: pointer; }
   .mm-seg button[aria-pressed="true"] { background: var(--mm-panel); color: var(--navy); box-shadow: 0 1px 2px rgba(20,28,45,0.12); }
   .mm-seg button:focus-visible { outline: 2px solid var(--umbc-gold); outline-offset: 1px; }
@@ -130,6 +131,55 @@ description: Interactive electromagnetic mode visualizations from the Energy Pho
       <div class="mm-block read mm-read" aria-live="polite">
         <div class="r"><span class="k">λ₀</span><span class="v" id="mm2Lam0">—</span></div>
         <div class="r"><span class="k">Under cap</span><span class="v" id="mm2Conf">—</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mm-card">
+  <h2 class="section-heading">Surface plasmon polariton</h2>
+  <p class="mm-caption">A metal grating: teeth standing on a metal substrate, all treated as a perfect conductor. A flat conductor carries no surface wave, but corrugating it traps the field in the grooves and binds it to the surface — a <em>spoof</em> surface plasmon. The magnetic polarization (H<sub>z</sub>) is solved live; from it we build the in-plane electric field, and you can switch between its E<sub>x</sub> and E<sub>y</sub> components. Change the groove depth, groove width, and tooth width to reshape the bound mode and its wavelength.</p>
+  <div class="mm-widget">
+    <div class="mm-stage">
+      <div class="mm-canvas-wrap">
+        <canvas id="mm3Field" width="600" height="480" role="img" aria-label="Colour map of the in-plane electric field of the selected spoof surface-plasmon mode"></canvas>
+      </div>
+      <div class="mm-cbar" aria-hidden="true">
+        <span class="t" id="mm3CbarLab">E<sub>y</sub></span>
+        <span class="l">+</span><div class="bar"></div><span class="l">−</span>
+      </div>
+    </div>
+    <div class="mm-controls">
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mm3D">Groove depth&nbsp;<em>d</em></label><span class="mm-val" id="mm3DVal">0.90 µm</span></div>
+        <input type="range" id="mm3D" min="0.4" max="1.2" step="0.02" value="0.9">
+      </div>
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mm3G">Groove width&nbsp;<em>g</em></label><span class="mm-val" id="mm3GVal">0.30 µm</span></div>
+        <input type="range" id="mm3G" min="0.16" max="0.6" step="0.02" value="0.3">
+      </div>
+      <div class="mm-block">
+        <div class="mm-ch"><label for="mm3T">Tooth width&nbsp;<em>t</em></label><span class="mm-val" id="mm3TVal">0.30 µm</span></div>
+        <input type="range" id="mm3T" min="0.16" max="0.6" step="0.02" value="0.3">
+      </div>
+      <div class="mm-block">
+        <span class="mm-lab">Field</span>
+        <div class="mm-seg mm-seg-2" role="group" aria-label="Field component">
+          <button id="mm3Ex" aria-pressed="false">E<sub>x</sub></button>
+          <button id="mm3Ey" aria-pressed="true">E<sub>y</sub></button>
+        </div>
+      </div>
+      <div class="mm-block mode">
+        <span class="mm-lab">Mode</span>
+        <div class="mm-seg" role="group" aria-label="Mode order">
+          <button id="mm3M0" aria-pressed="true">Fundamental</button>
+          <button id="mm3M1" aria-pressed="false">First-order</button>
+          <button id="mm3M2" aria-pressed="false">Second-order</button>
+        </div>
+      </div>
+      <div class="mm-block read mm-read" aria-live="polite">
+        <div class="r"><span class="k">λ₀</span><span class="v" id="mm3Lam0">—</span></div>
+        <div class="r"><span class="k">In grooves</span><span class="v" id="mm3Conf">—</span></div>
       </div>
     </div>
   </div>
@@ -431,6 +481,181 @@ description: Interactive electromagnetic mode visualizations from the Energy Pho
   var mb = [document.getElementById('mm2M0'), document.getElementById('mm2M1'), document.getElementById('mm2M2')];
   function setOrder(o) { st.order = o; for (var i = 0; i < 3; i++) mb[i].setAttribute('aria-pressed', i === o ? 'true' : 'false'); schedule(); }
   mb.forEach(function (b, i) { b.addEventListener('click', function () { setOrder(i); }); });
+  var raf = null;
+  function schedule() { if (raf) return; raf = requestAnimationFrame(function () { raf = null; render(); }); }
+  render();
+})();
+</script>
+
+<script>
+/* Card 3 — Surface plasmon polariton (spoof SPP on a PEC grating). Verified solver: eig_spp.js */
+(function () {
+  "use strict";
+  function makeHz(Nx, Ny, hh) { var NxP = Nx + 1, NyP = Ny + 1; return { NxP: NxP, NyP: NyP, id: function (i, j) { return j * NxP + i; }, hh: hh, Nx: Nx, Ny: Ny }; }
+  // PEC grating: substrate slab (y<=ysub) + teeth (height d) on top; grooves between teeth are air.
+  function buildGrating(p, g) {
+    var NxP = g.NxP, NyP = g.NyP, hh = g.hh, id = g.id, Ntot = NxP * NyP;
+    var xmin = p.xmin, ysub = p.ysub, d = p.d, gw = p.gw, tw = p.tw, Lx = p.Lx;
+    var lam = gw + tw, nper = Math.floor(Lx / lam + 1e-9), span = nper * lam, x0 = -span / 2;
+    function inTooth(x) { var xr = x - x0; if (xr < 0 || xr >= span) return false; return (xr % lam) < tw; }
+    function inGroove(x, y) { if (y <= ysub || y > ysub + d) return false; var xr = x - x0; if (xr < 0 || xr >= span) return false; return (xr % lam) >= tw; }
+    var metal = new Uint8Array(Ntot), i, j;
+    for (j = 0; j < NyP; j++) for (i = 0; i < NxP; i++) {
+      var x = xmin + i * hh, y = j * hh, k = id(i, j);
+      metal[k] = ((y <= ysub) || (y > ysub && y <= ysub + d && inTooth(x))) ? 1 : 0;
+    }
+    var dom = [], dofOf = new Int32Array(Ntot).fill(-1), t;
+    for (t = 0; t < Ntot; t++) if (!metal[t]) { dofOf[t] = dom.length; dom.push(t); }
+    return { metal: metal, dom: dom, dofOf: dofOf, N: dom.length, x0: x0, span: span, nper: nper, lam: lam, tw: tw, inGroove: inGroove };
+  }
+  // uniform-air Neumann Laplacian on the air domain (all air, index 1)
+  function makeApply(g, geom) {
+    var NxP = g.NxP, NyP = g.NyP, hh2 = g.hh * g.hh, metal = geom.metal, dom = geom.dom, dofOf = geom.dofOf, N = geom.N;
+    return function (u, out) {
+      var dd, k, i, j, acc;
+      for (dd = 0; dd < N; dd++) {
+        k = dom[dd]; i = k % NxP; j = (k / NxP) | 0; acc = 0;
+        if (i + 1 < NxP && !metal[k + 1]) acc += (u[dd] - u[dofOf[k + 1]]);
+        if (i - 1 >= 0 && !metal[k - 1]) acc += (u[dd] - u[dofOf[k - 1]]);
+        if (j + 1 < NyP && !metal[k + NxP]) acc += (u[dd] - u[dofOf[k + NxP]]);
+        if (j - 1 >= 0 && !metal[k - NxP]) acc += (u[dd] - u[dofOf[k - NxP]]);
+        out[dd] = acc / hh2;
+      }
+    };
+  }
+  function meanZero(v, N) { var s = 0, t; for (t = 0; t < N; t++) s += v[t]; s /= N; for (t = 0; t < N; t++) v[t] -= s; }
+  function dot(a, b, N) { var s = 0, t; for (t = 0; t < N; t++) s += a[t] * b[t]; return s; }
+  function cg(applyA, b, N, tol, maxit) {
+    var x = new Float64Array(N), r = new Float64Array(N), pv = new Float64Array(N), Ap = new Float64Array(N), t;
+    meanZero(b, N); for (t = 0; t < N; t++) { r[t] = b[t]; pv[t] = b[t]; }
+    var rs = dot(r, r, N), rs0 = rs, it;
+    for (it = 0; it < maxit; it++) {
+      applyA(pv, Ap); meanZero(Ap, N);
+      var al = rs / (dot(pv, Ap, N) + 1e-300);
+      for (t = 0; t < N; t++) { x[t] += al * pv[t]; r[t] -= al * Ap[t]; }
+      var rs1 = dot(r, r, N); if (rs1 < tol * tol * rs0) break;
+      var be = rs1 / rs; for (t = 0; t < N; t++) pv[t] = r[t] + be * pv[t]; rs = rs1;
+    }
+    meanZero(x, N); return x;
+  }
+  function jacobiEig(Ain, p) {
+    var A = [], V = [], a, b;
+    for (a = 0; a < p; a++) A.push(Ain[a].slice());
+    for (b = 0; b < p; b++) { var rr = new Float64Array(p); rr[b] = 1; V.push(rr); }
+    for (var sweep = 0; sweep < 100; sweep++) {
+      var off = 0, q, w; for (q = 0; q < p; q++) for (w = q + 1; w < p; w++) off += A[q][w] * A[q][w]; if (off < 1e-22) break;
+      for (var i = 0; i < p; i++) for (var j = i + 1; j < p; j++) {
+        if (Math.abs(A[i][j]) < 1e-20) continue;
+        var th = (A[j][j] - A[i][i]) / (2 * A[i][j]);
+        var t = (th === 0) ? 1 : Math.sign(th) / (Math.abs(th) + Math.sqrt(th * th + 1));
+        var c = 1 / Math.sqrt(t * t + 1), s = t * c, kk, k2;
+        for (kk = 0; kk < p; kk++) { var aik = A[i][kk], ajk = A[j][kk]; A[i][kk] = c * aik - s * ajk; A[j][kk] = s * aik + c * ajk; }
+        for (k2 = 0; k2 < p; k2++) { var aki = A[k2][i], akj = A[k2][j]; A[k2][i] = c * aki - s * akj; A[k2][j] = s * aki + c * akj; var vki = V[k2][i], vkj = V[k2][j]; V[k2][i] = c * vki - s * vkj; V[k2][j] = s * vki + c * vkj; }
+      }
+    }
+    var val = [], d; for (d = 0; d < p; d++) val.push(A[d][d]);
+    var idx = val.map(function (v, ii) { return ii; }).sort(function (x, y) { return val[x] - val[y]; });
+    return { val: idx.map(function (ii) { return val[ii]; }), order: idx, V: V };
+  }
+  function solveHz(g, geom, p, iters) {
+    var N = geom.N, applyA = makeApply(g, geom), t, X = [], seed = 999;
+    function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff - 0.5; }
+    for (var c = 0; c < p; c++) { var v = new Float64Array(N); for (t = 0; t < N; t++) v[t] = rnd(); meanZero(v, N); X.push(v); }
+    var res = null;
+    for (var it = 0; it < iters; it++) {
+      var Y = [], cc; for (cc = 0; cc < p; cc++) { var y = cg(applyA, X[cc].slice(), N, 1e-7, 2000); meanZero(y, N); Y.push(y); }
+      for (var a = 0; a < p; a++) { for (var b = 0; b < a; b++) { var pr = dot(Y[a], Y[b], N); for (t = 0; t < N; t++) Y[a][t] -= pr * Y[b][t]; } var nrm = Math.sqrt(dot(Y[a], Y[a], N)); for (t = 0; t < N; t++) Y[a][t] /= nrm; }
+      var AY = Y.map(function (y) { var o = new Float64Array(N); applyA(y, o); return o; });
+      var Abar = []; for (var r1 = 0; r1 < p; r1++) Abar.push(new Array(p));
+      for (var r = 0; r < p; r++) for (var s2 = r; s2 < p; s2++) { var vv = dot(AY[r], Y[s2], N); Abar[r][s2] = vv; Abar[s2][r] = vv; }
+      var eg = jacobiEig(Abar, p), newX = [], m;
+      for (m = 0; m < p; m++) { var col = eg.order[m], vec = new Float64Array(N), qq; for (qq = 0; qq < p; qq++) { var cq = eg.V[qq][col]; for (t = 0; t < N; t++) vec[t] += cq * Y[qq][t]; } newX.push(vec); }
+      X = newX; res = eg.val;
+    }
+    return { theta: res, vecs: X };
+  }
+
+  var PLASMA = [[0,[13,8,135]],[.25,[126,3,168]],[.5,[204,71,120]],[.75,[248,149,64]],[1,[240,249,33]]];
+  function sampleMap(stops, tt) { if (tt <= stops[0][0]) return stops[0][1]; for (var i = 1; i < stops.length; i++) if (tt <= stops[i][0]) { var a = stops[i - 1], b = stops[i], s = (tt - a[0]) / (b[0] - a[0]); return [(a[1][0]+(b[1][0]-a[1][0])*s)|0,(a[1][1]+(b[1][1]-a[1][1])*s)|0,(a[1][2]+(b[1][2]-a[1][2])*s)|0]; } return stops[stops.length - 1][1]; }
+  function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function hexToRgb(hx) { hx = hx.replace('#',''); if (hx.length===3) hx=hx[0]+hx[0]+hx[1]+hx[1]+hx[2]+hx[2]; return [parseInt(hx.slice(0,2),16),parseInt(hx.slice(2,4),16),parseInt(hx.slice(4,6),16)]; }
+
+  var Lx = 4.0, Ly = 3.2, Nx = 60, hh = Lx / Nx, Ny = Math.round(Ly / hh); Ly = Ny * hh;
+  var g = makeHz(Nx, Ny, hh), xmin = -Lx / 2, ysub = 0.4;
+  var st = { d: 0.9, gw: 0.3, tw: 0.3, order: 0, comp: 'y' };
+  var cvs = document.getElementById("mm3Field"), ctx = cvs.getContext("2d");
+  var NxP = g.NxP, NyP = g.NyP;
+  var offc = document.createElement("canvas"); offc.width = NxP; offc.height = NyP;
+  var octx = offc.getContext("2d");
+  var scale = 600 / Lx; cvs.width = 600; cvs.height = Math.round(Ly * scale);
+
+  function render() {
+    var pr = { xmin: xmin, Lx: Lx, ysub: ysub, d: st.d, gw: st.gw, tw: st.tw };
+    var geom = buildGrating(pr, g), r = solveHz(g, geom, 8, 14);
+    var dom = geom.dom, dofOf = geom.dofOf, metal = geom.metal, N = geom.N, d, k, i, j;
+    function grooveFrac(vec) { var ig = 0, tot = 0, dd; for (dd = 0; dd < N; dd++) { k = dom[dd]; i = k % NxP; j = (k / NxP) | 0; var x = xmin + i * hh, y = j * hh, e = vec[dd] * vec[dd]; tot += e; if (geom.inGroove(x, y)) ig += e; } return ig / tot; }
+    var arr = [], mi; for (mi = 0; mi < r.theta.length; mi++) if (r.theta[mi] > 1e-4) arr.push({ th: r.theta[mi], vec: r.vecs[mi], gf: grooveFrac(r.vecs[mi]) });
+    var conf = arr.filter(function (a) { return a.gf > 0.5; }).sort(function (a, b) { return a.th - b.th; });
+
+    var W = cvs.width, H = cvs.height;
+    var panel = hexToRgb(cssVar('--mm-panel') || '#ffffff'), metalC = cssVar('--mm-metal') || '#b6bdca', metalRgb = hexToRgb(metalC);
+    ctx.fillStyle = 'rgb(' + panel.join(',') + ')'; ctx.fillRect(0, 0, W, H);
+
+    if (conf.length <= st.order) {
+      document.getElementById('mm3Lam0').textContent = '—'; document.getElementById('mm3Conf').textContent = 'no mode';
+    } else {
+      var sel = conf[st.order], vec = sel.vec;
+      // reconstruct full-grid Hz (metal nodes = 0)
+      var Hz = new Float64Array(NxP * NyP), dd;
+      for (dd = 0; dd < N; dd++) Hz[dom[dd]] = vec[dd];
+      // in-plane E from Hz: Ex ~ dHz/dy, Ey ~ -dHz/dx (one-sided at metal faces)
+      var Fld = new Float64Array(NxP * NyP);
+      for (j = 1; j < NyP - 1; j++) for (i = 1; i < NxP - 1; i++) {
+        k = j * NxP + i; if (metal[k]) continue;
+        if (st.comp === 'x') { var up = metal[k + NxP] ? Hz[k] : Hz[k + NxP], dn = metal[k - NxP] ? Hz[k] : Hz[k - NxP]; Fld[k] = (up - dn) / (2 * hh); }
+        else { var rt = metal[k + 1] ? Hz[k] : Hz[k + 1], lf = metal[k - 1] ? Hz[k] : Hz[k - 1]; Fld[k] = -(rt - lf) / (2 * hh); }
+      }
+      var maxa = 1e-12; for (k = 0; k < Fld.length; k++) { var av = Math.abs(Fld[k]); if (av > maxa) maxa = av; }
+      var im = octx.createImageData(NxP, NyP), im8 = im.data;
+      for (j = 0; j < NyP; j++) for (i = 0; i < NxP; i++) {
+        k = j * NxP + i; var row = NyP - 1 - j, idx = (row * NxP + i) * 4, c;
+        if (metal[k]) c = metalRgb; else { var val = Fld[k] / maxa, tt = 0.5 * (val + 1); if (tt < 0) tt = 0; else if (tt > 1) tt = 1; c = sampleMap(PLASMA, tt); }
+        im8[idx] = c[0]; im8[idx + 1] = c[1]; im8[idx + 2] = c[2]; im8[idx + 3] = 255;
+      }
+      octx.putImageData(im, 0, 0);
+      ctx.imageSmoothingEnabled = true; ctx.drawImage(offc, 0, 0, NxP, NyP, 0, 0, W, H);
+      document.getElementById('mm3Lam0').textContent = (2 * Math.PI / Math.sqrt(sel.th)).toFixed(3) + ' µm';
+      document.getElementById('mm3Conf').textContent = (sel.gf * 100).toFixed(0) + ' %';
+    }
+
+    // metal hatch + outlines (substrate slab + teeth), matching the solved geometry
+    var tX = function (x) { return (x - xmin) * scale; }, tY = function (y) { return (Ly - y) * scale; };
+    var lam = st.gw + st.tw, nper = Math.floor(Lx / lam + 1e-9), span = nper * lam, x0 = -span / 2;
+    var region = new Path2D();
+    region.rect(0, tY(ysub), W, H - tY(ysub));                       // substrate slab
+    var kk; for (kk = 0; kk < nper; kk++) { var xa = x0 + kk * lam; region.rect(tX(xa), tY(ysub + st.d), st.tw * scale, st.d * scale); } // teeth
+    ctx.save(); ctx.clip(region);
+    ctx.fillStyle = metalC; ctx.fill(region);
+    ctx.strokeStyle = cssVar('--mm-metal-line') || '#97a0af'; ctx.lineWidth = 1; ctx.beginPath();
+    for (var hx = -H; hx < W; hx += 9) { ctx.moveTo(hx, H); ctx.lineTo(hx + H, 0); }
+    ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = cssVar('--mm-metal-line') || '#97a0af'; ctx.lineWidth = 1.25; ctx.stroke(region);
+
+    ctx.fillStyle = cssVar('--mm-muted') || '#596273'; ctx.font = '600 12px ' + (cssVar('--mm-mono') || 'monospace');
+    ctx.fillText('PEC', 8, H - 8);
+  }
+
+  function bindSlider(idn, key, fmt) { var el = document.getElementById(idn), o = document.getElementById(idn + 'Val'); el.addEventListener('input', function () { st[key] = parseFloat(el.value); o.textContent = fmt(st[key]); schedule(); }); }
+  bindSlider('mm3D', 'd', function (v) { return v.toFixed(2) + ' µm'; });
+  bindSlider('mm3G', 'gw', function (v) { return v.toFixed(2) + ' µm'; });
+  bindSlider('mm3T', 'tw', function (v) { return v.toFixed(2) + ' µm'; });
+  var mb = [document.getElementById('mm3M0'), document.getElementById('mm3M1'), document.getElementById('mm3M2')];
+  function setOrder(o) { st.order = o; for (var i = 0; i < 3; i++) mb[i].setAttribute('aria-pressed', i === o ? 'true' : 'false'); schedule(); }
+  mb.forEach(function (b, i) { b.addEventListener('click', function () { setOrder(i); }); });
+  var fx = document.getElementById('mm3Ex'), fy = document.getElementById('mm3Ey'), clab = document.getElementById('mm3CbarLab');
+  function setComp(cc) { st.comp = cc; fx.setAttribute('aria-pressed', cc === 'x' ? 'true' : 'false'); fy.setAttribute('aria-pressed', cc === 'y' ? 'true' : 'false'); clab.innerHTML = cc === 'x' ? 'E<sub>x</sub>' : 'E<sub>y</sub>'; schedule(); }
+  fx.addEventListener('click', function () { setComp('x'); });
+  fy.addEventListener('click', function () { setComp('y'); });
   var raf = null;
   function schedule() { if (raf) return; raf = requestAnimationFrame(function () { raf = null; render(); }); }
   render();
