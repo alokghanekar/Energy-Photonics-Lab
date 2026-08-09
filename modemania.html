@@ -80,8 +80,8 @@ description: Interactive electromagnetic mode visualizations from the Energy Pho
       <div class="mm-block mode">
         <span class="mm-lab">Mode</span>
         <div class="mm-seg" role="group" aria-label="Mode order">
-          <button id="mmM0" aria-pressed="true">Fundamental</button>
-          <button id="mmM1" aria-pressed="false">First-order</button>
+          <button id="mmM0" aria-pressed="false">Fundamental</button>
+          <button id="mmM1" aria-pressed="true">First-order</button>
           <button id="mmM2" aria-pressed="false">Second-order</button>
         </div>
       </div>
@@ -179,7 +179,7 @@ description: Interactive electromagnetic mode visualizations from the Energy Pho
 
   var Lx = 4.0, Ly = 3.2, Nx = 64, hh = Lx / Nx, Ny = Math.round(Ly / hh); Ly = Ny * hh;
   var grid = makeSolver(Nx, Ny, hh), xmin = -Lx / 2, METAL = 0.35, solveP = 6, solveIters = 18;
-  var state = { n: 3, w: 1.2, h: 0.9, order: 0 };
+  var state = { n: 3, w: 1.2, h: 0.9, order: 1 };
 
   var cvs = document.getElementById("mmField"), ctx = cvs.getContext("2d");
   var offc = document.createElement("canvas"); offc.width = grid.Mx; offc.height = grid.My;
