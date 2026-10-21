@@ -354,3 +354,15 @@ sub { line-height: 0; }
   .spec-table th[scope="row"] { padding-bottom: 0.1rem; border-bottom: 0; }
   .spec-table td { padding-top: 0.1rem; }
 }
+
+/* Undergraduate profiles share two columns, then stack on smaller screens. */
+.undergraduate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem 2.5rem;
+  margin-top: 1.25rem;
+}
+.undergraduate-grid .person { margin: 0; min-width: 0; }
+@media (max-width: 900px) {
+  .undergraduate-grid { grid-template-columns: 1fr; }
+}
